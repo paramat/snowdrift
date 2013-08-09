@@ -7,13 +7,13 @@
 
 -- Parameters
 
-local MAXCHA = 1 -- (0 to 1) Maximum per globalstep chance of processing a player. Controls snow density and processing load.
+local MAXCHA = 0.5 -- (0 to 1) Maximum per globalstep chance of processing a player. Controls snow density and processing load.
 
 local SEED1 = 112 -- 112 -- These 5 parameters should match the values you use in snow mod.
 local OCTA1 = 3 -- 3
 local PERS1 = 0.5 -- 0.5
-local SCAL1 = 256 -- 150 -- Large scale size of snow biomes.
-local SNOTHR = 0.4 -- 0.53 -- Perlin noise > SNOTHR for snow biome.
+local SCAL1 = 150 -- 150 -- Large scale size of snow biomes.
+local SNOTHR = 0.53 -- 0.53 -- Perlin noise > SNOTHR for snow biome.
 
 -- Stuff
 
