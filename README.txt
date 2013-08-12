@@ -1,9 +1,9 @@
-Snowdrift 0.1.1 by paramat
-For latest stable Minetest and back to 0.4.6
-Depends default
-Licenses: Code WTFPL. Textures CC BY-SA.
-This is intended to be used as alternative snowfall for the snow mod by Splizard.
-The code is partly derived from weather mod by Jeija and snow mod version 1.8 by Splizard.
+-- Snowdrift 0.1.2 by paramat
+-- For latest stable Minetest and back to 0.4.6
+-- Depends default
+-- Licenses: Code WTFPL. Textures CC BY-SA.
+-- This is intended to be used as alternative snowfall for the snow mod by Splizard.
+-- The code is partly derived from weather mod by Jeija and snow mod version 1.8 by Splizard.
 
 Version 0.1.0
 ---------------
@@ -21,3 +21,7 @@ Version 0.1.1
 -------------
 * Mod is too light, doubled maximum snow density, added second snowflake design with a square symmetry.
 * Snow density is now smoothly varied by how deep into a snow biome a player is.
+
+Version 0.1.2
+-------------
+* Maximum snowfall doubled, 4 snowflake designs.
