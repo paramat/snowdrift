@@ -1,9 +1,7 @@
--- Snowdrift 0.1.2 by paramat
--- For latest stable Minetest and back to 0.4.6
--- Depends default
--- Licenses: Code WTFPL. Textures CC BY-SA.
--- This is intended to be used as alternative snowfall for the snow mod by Splizard.
--- The code is partly derived from weather mod by Jeija and snow mod version 1.8 by Splizard.
+Snowdrift 0.2.0 by paramat
+For latest stable Minetest and back to 0.4.6
+Depends default
+Licenses: code WTFPL, textures CC BY-SA
 
 Version 0.1.0
 ---------------
@@ -25,3 +23,7 @@ Version 0.1.1
 Version 0.1.2
 -------------
 * Maximum snowfall doubled, 4 snowflake designs.
+
+v0.2.0
+------
+* Rain defined by a second perlin noise and threshold.
