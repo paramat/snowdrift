@@ -1,7 +1,9 @@
--- snowdrift 0.2.1 by paramat
+-- snowdrift 0.2.2 by paramat
 -- For latest stable Minetest and back to 0.4.6
 -- Depends default
 -- Licenses: code WTFPL, textures CC BY-SA
+
+-- Removed snow noise offset
 
 -- Parameters
 
@@ -48,7 +50,7 @@ minetest.register_globalstep(function(dtime)
 		local noiseh
 		if SNOWV6 or THOVER then
 			local perlint = minetest.get_perlin(SEEDT, OCTAT, PERST, SCALT)
-			noiset = perlint:get2d({x = ppos.x + 150, y = ppos.z + 50})
+			noiset = perlint:get2d({x = ppos.x, y = ppos.z})
 		end
 		if RAIN or THOVER then	
 			local perlinh = minetest.get_perlin(SEEDH, OCTAH, PERSH, SCALH)
