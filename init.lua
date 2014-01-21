@@ -1,17 +1,17 @@
--- snowdrift 0.2.2 by paramat
+-- snowdrift 0.2.3 by paramat
 -- For latest stable Minetest and back to 0.4.6
 -- Depends default
 -- Licenses: code WTFPL, textures CC BY-SA
 
--- Removed snow noise offset
-
 -- Parameters
 
-local PROCHA = 0.2 -- (0 to 1) -- Per player processing chance, randomizes and spreads processing load
+local PPPCHA = 0.2 -- (0 to 1) -- Per player processing chance, randomizes and spreads processing load
+local SETCHA = 0.5 -- (0 to 1) -- Snow settling rate
 local DROPS = 8 -- Rainfall heaviness
 local SNOWV6 = true -- Snowfall in snow biomes of snow mod by Splizard
+local SETTLE = true -- 
 local RAIN = false -- Rain above humidity threshold
-local THOVER = false -- Instea use a temperature and humidity system with
+local THOVER = false -- Instead use a temperature and humidity system with
 			-- snow in overlap of cold and humid
 			-- else rain in humid areas
 local SEEDT = 112 -- 112 -- If THOVER = true, set these to your mapgen's temperature noise parameters
@@ -20,7 +20,7 @@ local PERST = 0.5 -- 0.5
 local SCALT = 150 -- 150
 
 local TET = -0.53 -- -0.53 -- Temperature threshold for snow
-				-- If SNOWV6 = true set to -0.53
+			-- If SNOWV6 = true set to -0.53
 local SEEDH = 72384 -- 72384 -- Set these to your mapgen's humidity noise parameters
 local OCTAH = 4 -- 4
 local PERSH = 0.66 -- 0.66
@@ -37,7 +37,7 @@ snowdrift = {}
 minetest.register_globalstep(function(dtime)
 	-- TODO if not raining at this time then return
 	for _, player in ipairs(minetest.get_connected_players()) do
-		if math.random() > PROCHA then
+		if math.random() > PPPCHA then
 			return
 		end
 		local ppos = player:getpos()
@@ -116,6 +116,38 @@ minetest.register_globalstep(function(dtime)
 				"snowdrift_snowflake4.png",
 				player:get_player_name()
 			)
+			if SETTLE and math.random() < SETCHA then
+				local sposx = math.floor(ppos.x) - 64 + math.random(0, 128)
+				local sposz = math.floor(ppos.z) - 64 + math.random(0, 128)
+				local pposy = math.floor(ppos.y)
+				local surfy = false
+				for y = pposy + 64, pposy - 64, -1 do
+					local nodename = minetest.get_node({x=sposx, y=y, z=sposz}).name
+					if nodename ~= "air" and nodename ~= "ignore" then
+						if nodename == "default:desert_sand"
+						or nodename == "default:desert_stone" then
+							break
+						else
+							local drawtype = minetest.registered_nodes[nodename].drawtype
+							if drawtype == "normal"
+							or drawtype == "glasslike"
+							or drawtype == "glasslike_framed"
+							or drawtype == "allfaces"
+							or drawtype == "allfaces_optional" then
+								surfy = y
+								break
+							else
+								break
+							end
+						end
+					end
+				end
+				if surfy then
+					if minetest.get_node_light({x=sposx, y=surfy, z=sposz}, 0.5) >= 0 then
+						minetest.add_node({x=sposx, y=surfy+1, z=sposz}, {name="default:snow"})
+					end
+				end
+			end
 		end
 		if rain then
 			for drop = 1, DROPS do
