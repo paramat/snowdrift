@@ -1,34 +1,34 @@
--- snowdrift 0.2.4 by paramat
+-- snowdrift 0.2.5 by paramat
 -- For latest stable Minetest and back to 0.4.6
 -- Depends default
 -- Licenses: code WTFPL, textures CC BY-SA
 
 -- Parameters
 
-local SCALP = 6 -- Time scale for precipitation in minutes
-local PRET = 0 -- -1 to 1 -- Precipitation threshold: 1 none, -1 continuous, 0 half the time, 0.3 one third the time
-local PPPCHA = 0.1 -- 0 to 1 -- Per player processing chance. Controls and randomizes processing load
-local SETCHA = 0.2 -- 0 to 1 -- Snow settling chance
-local DROPS = 8 -- Rainfall heaviness
-local SNOWV6 = true -- Snowfall in snow biomes of snow mod by Splizard
-local SETTLE = true -- 
-local RAIN = false -- Rain above humidity threshold
+local SCALP = 3 -- Time scale for precipitation in minutes
+local PRET = 0 -- -1 to 1. Precipitation threshold: 1 none, -1 continuous, 0 half the time, 0.3 one third the time
+local PPPCHA = 0.1 -- 0 to 1. Per player processing chance. Controls and randomizes processing load
+local SETCHA = 0.2 -- 0 to 1. Snow settling chance
+local DROPS = 16 -- Rainfall heaviness
+local SNOW = true -- Snowfall below temperature threshold
+local SETTLE = true -- Snow collects on ground within 32 nodes of player
+local RAIN = true -- Rain above humidity threshold
 local THOVER = false -- Instead use a temperature and humidity system with
-		-- snow in overlap of cold and humid areas, else rain in humid areas
+			-- snow in overlap of cold and humid areas, else rain in humid areas
 			
 -- Temperature noise parameters
-local SEEDT = 112 -- 112 -- These are default noise parameters for snow mod mapgen V6
-local OCTAT = 3	 -- 3
+local SEEDT = 112 -- 112 These are default noise parameters from snow mod by Splizard
+local OCTAT = 3	 -- 3		use these for snowfall in those snow biomes
 local PERST = 0.5 -- 0.5
 local SCALT = 150 -- 150
-local TET = -0.53 -- -0.53 -- Temperature threshold for snow. If SNOWV6 = true set to -0.53
+local TET = -0.53 -- -0.53 Temperature threshold for snow
 
 -- Humidity noise parameters
 local SEEDH = 72384 -- 72384 These are default noise parameters for mapgen V6 humidity
 local OCTAH = 4 -- 4		note these cause rain in deserts
 local PERSH = 0.66 -- 0.66
 local SCALH = 500 -- 500
-local HUT = 0.5 -- 0.5 -- Humidity threshold for rain
+local HUT = -4 -- Humidity threshold for rain
 
 -- Stuff
 
@@ -56,7 +56,7 @@ minetest.register_globalstep(function(dtime)
 		local rain = false
 		local noiset
 		local noiseh
-		if SNOWV6 or THOVER then
+		if SNOW or THOVER then
 			local perlint = minetest.get_perlin(SEEDT, OCTAT, PERST, SCALT)
 			noiset = perlint:get2d({x = pposx, y = pposz})
 		end
@@ -70,7 +70,7 @@ minetest.register_globalstep(function(dtime)
 			elseif noiseh > HUT then
 				rain = true
 			end
-		elseif SNOWV6 then
+		elseif SNOW then
 			if -noiset < TET then -- negative sign because snow mod noise is 'coldness'
 				snow = true
 			elseif RAIN then
@@ -85,7 +85,7 @@ minetest.register_globalstep(function(dtime)
 		end
 		if snow then
 			minetest.add_particle(
-				{x=pposx-48+math.random(0,96), y=pposy+16, z=pposz-32+math.random(0,96)}, -- posi
+				{x=pposx-32+math.random(0,63), y=pposy+16, z=pposz-16+math.random(0,63)}, -- posi
 				{x=math.random()/5-0.1, y=math.random()/5-1.1, z=math.random()/5-1.1}, -- velo
 				{x=math.random()/50-0.01, y=math.random()/50-0.01, z=math.random()/50-0.01}, -- acce
 				32,
@@ -95,7 +95,7 @@ minetest.register_globalstep(function(dtime)
 				player:get_player_name()
 			)
 			minetest.add_particle(
-				{x=pposx-48+math.random(0,96), y=pposy+16, z=pposz-32+math.random(0,96)}, -- posi
+				{x=pposx-32+math.random(0,63), y=pposy+16, z=pposz-16+math.random(0,63)}, -- posi
 				{x=math.random()/5-0.1, y=math.random()/5-1.1, z=math.random()/5-1.1}, -- velo
 				{x=math.random()/50-0.01, y=math.random()/50-0.01, z=math.random()/50-0.01}, -- acce
 				32,
@@ -105,7 +105,7 @@ minetest.register_globalstep(function(dtime)
 				player:get_player_name()
 			)
 			minetest.add_particle(
-				{x=pposx-48+math.random(0,96), y=pposy+16, z=pposz-32+math.random(0,96)}, -- posi
+				{x=pposx-32+math.random(0,63), y=pposy+16, z=pposz-16+math.random(0,63)}, -- posi
 				{x=math.random()/5-0.1, y=math.random()/5-1.1, z=math.random()/5-1.1}, -- velo
 				{x=math.random()/50-0.01, y=math.random()/50-0.01, z=math.random()/50-0.01}, -- acce
 				32,
@@ -115,7 +115,7 @@ minetest.register_globalstep(function(dtime)
 				player:get_player_name()
 			)
 			minetest.add_particle(
-				{x=pposx-48+math.random(0,96), y=pposy+16, z=pposz-32+math.random(0,96)}, -- posi
+				{x=pposx-32+math.random(0,63), y=pposy+16, z=pposz-16+math.random(0,63)}, -- posi
 				{x=math.random()/5-0.1, y=math.random()/5-1.1, z=math.random()/5-1.1}, -- velo
 				{x=math.random()/50-0.01, y=math.random()/50-0.01, z=math.random()/50-0.01}, -- acce
 				32,
@@ -125,8 +125,8 @@ minetest.register_globalstep(function(dtime)
 				player:get_player_name()
 			)
 			if SETTLE and math.random() < SETCHA then -- settling snow
-				local sposx = pposx - 32 + math.random(0, 64)
-				local sposz = pposz - 32 + math.random(0, 64)
+				local sposx = pposx - 32 + math.random(0, 63)
+				local sposz = pposz - 32 + math.random(0, 63)
 				if minetest.get_node_light({x=sposx, y=pposy+32, z=sposz}, 0.5) == 15 then -- check under open sky
 					for y = pposy + 32, pposy - 64, -1 do -- find surface
 						local nodename = minetest.get_node({x=sposx, y=y, z=sposz}).name
