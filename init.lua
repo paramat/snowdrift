@@ -1,18 +1,24 @@
--- snowdrift 0.2.5 by paramat
--- For latest stable Minetest and back to 0.4.6
+-- snowdrift 0.3.0 by paramat
+-- For latest stable Minetest and back to 0.4.9 dev after 13/01/14
 -- Depends default
 -- Licenses: code WTFPL, textures CC BY-SA
 
+-- snowfall heaviness parameter
+-- rain off by default
+-- snow and rain heavier by default
+-- update particle spawn format
+
 -- Parameters
 
-local SCALP = 3 -- Time scale for precipitation in minutes
-local PRET = 0 -- -1 to 1. Precipitation threshold: 1 none, -1 continuous, 0 half the time, 0.3 one third the time
+local SCALP = 11 -- Time scale for precipitation in minutes
+local PRET = -1 -- -1 to 1. Precipitation threshold: 1 none, -1 continuous, -0.3 two thirds the time, 0 half the time, 0.3 one third the time
 local PPPCHA = 0.1 -- 0 to 1. Per player processing chance. Controls and randomizes processing load
 local SETCHA = 0.2 -- 0 to 1. Snow settling chance
-local DROPS = 16 -- Rainfall heaviness
+local FLAKES = 2 -- Snowfall heaviness. Try 1 on slower computers
+local DROPS = 32 -- Rainfall heaviness. Reduce on slower computers
 local SNOW = true -- Snowfall below temperature threshold
-local SETTLE = true -- Snow collects on ground within 32 nodes of player
-local RAIN = true -- Rain above humidity threshold
+local SETTLE = false -- Snow collects on ground within 32 nodes of player
+local RAIN = false -- Rain above humidity threshold
 local THOVER = false -- Instead use a temperature and humidity system with
 			-- snow in overlap of cold and humid areas, else rain in humid areas
 			
@@ -21,14 +27,14 @@ local SEEDT = 112 -- 112 These are default noise parameters from snow mod by Spl
 local OCTAT = 3	 -- 3		use these for snowfall in those snow biomes
 local PERST = 0.5 -- 0.5
 local SCALT = 150 -- 150
-local TET = -0.53 -- -0.53 Temperature threshold for snow
+local TET = -0.53 -- -0.53 Temperature threshold for snow. Negative because here this noise is temperature, in snow mod it's coldness
 
 -- Humidity noise parameters
 local SEEDH = 72384 -- 72384 These are default noise parameters for mapgen V6 humidity
 local OCTAH = 4 -- 4		note these cause rain in deserts
 local PERSH = 0.66 -- 0.66
 local SCALH = 500 -- 500
-local HUT = -4 -- Humidity threshold for rain
+local HUT = 0 -- Humidity threshold for rain
 
 -- Stuff
 
@@ -84,46 +90,52 @@ minetest.register_globalstep(function(dtime)
 			end
 		end
 		if snow then
-			minetest.add_particle(
-				{x=pposx-32+math.random(0,63), y=pposy+16, z=pposz-16+math.random(0,63)}, -- posi
-				{x=math.random()/5-0.1, y=math.random()/5-1.1, z=math.random()/5-1.1}, -- velo
-				{x=math.random()/50-0.01, y=math.random()/50-0.01, z=math.random()/50-0.01}, -- acce
-				32,
-				2.8,
-				false,
-				"snowdrift_snowflake1.png",
-				player:get_player_name()
-			)
-			minetest.add_particle(
-				{x=pposx-32+math.random(0,63), y=pposy+16, z=pposz-16+math.random(0,63)}, -- posi
-				{x=math.random()/5-0.1, y=math.random()/5-1.1, z=math.random()/5-1.1}, -- velo
-				{x=math.random()/50-0.01, y=math.random()/50-0.01, z=math.random()/50-0.01}, -- acce
-				32,
-				2.8,
-				false,
-				"snowdrift_snowflake2.png",
-				player:get_player_name()
-			)
-			minetest.add_particle(
-				{x=pposx-32+math.random(0,63), y=pposy+16, z=pposz-16+math.random(0,63)}, -- posi
-				{x=math.random()/5-0.1, y=math.random()/5-1.1, z=math.random()/5-1.1}, -- velo
-				{x=math.random()/50-0.01, y=math.random()/50-0.01, z=math.random()/50-0.01}, -- acce
-				32,
-				2.8,
-				false,
-				"snowdrift_snowflake3.png",
-				player:get_player_name()
-			)
-			minetest.add_particle(
-				{x=pposx-32+math.random(0,63), y=pposy+16, z=pposz-16+math.random(0,63)}, -- posi
-				{x=math.random()/5-0.1, y=math.random()/5-1.1, z=math.random()/5-1.1}, -- velo
-				{x=math.random()/50-0.01, y=math.random()/50-0.01, z=math.random()/50-0.01}, -- acce
-				32,
-				2.8,
-				false,
-				"snowdrift_snowflake4.png",
-				player:get_player_name()
-			)
+			for flake = 1, FLAKES do
+				minetest.add_particle({
+					pos = {x=pposx-32+math.random(0,63), y=pposy+16, z=pposz-16+math.random(0,63)},
+					vel = {x=math.random()/5-0.1, y=math.random()/5-1.1, z=math.random()/5-1.1},
+					acc = {x=math.random()/50-0.01, y=math.random()/50-0.01, z=math.random()/50-0.01},
+					expirationtime = 32,
+					size = 2.8,
+					collisiondetection = false,
+					vertical = false,
+					texture = "snowdrift_snowflake1.png",
+					playername = player:get_player_name(),
+				})
+				minetest.add_particle({
+					pos = {x=pposx-32+math.random(0,63), y=pposy+16, z=pposz-16+math.random(0,63)},
+					vel = {x=math.random()/5-0.1, y=math.random()/5-1.1, z=math.random()/5-1.1},
+					acc = {x=math.random()/50-0.01, y=math.random()/50-0.01, z=math.random()/50-0.01},
+					expirationtime = 32,
+					size = 2.8,
+					collisiondetection = false,
+					vertical = false,
+					texture = "snowdrift_snowflake2.png",
+					playername = player:get_player_name(),
+				})
+				minetest.add_particle({
+					pos = {x=pposx-32+math.random(0,63), y=pposy+16, z=pposz-16+math.random(0,63)},
+					vel = {x=math.random()/5-0.1, y=math.random()/5-1.1, z=math.random()/5-1.1},
+					acc = {x=math.random()/50-0.01, y=math.random()/50-0.01, z=math.random()/50-0.01},
+					expirationtime = 32,
+					size = 2.8,
+					collisiondetection = false,
+					vertical = false,
+					texture = "snowdrift_snowflake3.png",
+					playername = player:get_player_name(),
+				})
+				minetest.add_particle({
+					pos = {x=pposx-32+math.random(0,63), y=pposy+16, z=pposz-16+math.random(0,63)},
+					vel = {x=math.random()/5-0.1, y=math.random()/5-1.1, z=math.random()/5-1.1},
+					acc = {x=math.random()/50-0.01, y=math.random()/50-0.01, z=math.random()/50-0.01},
+					expirationtime = 32,
+					size = 2.8,
+					collisiondetection = false,
+					vertical = false,
+					texture = "snowdrift_snowflake4.png",
+					playername = player:get_player_name(),
+				})
+			end
 			if SETTLE and math.random() < SETCHA then -- settling snow
 				local sposx = pposx - 32 + math.random(0, 63)
 				local sposz = pposz - 32 + math.random(0, 63)
@@ -164,16 +176,17 @@ minetest.register_globalstep(function(dtime)
 		end
 		if rain then
 			for drop = 1, DROPS do
-				minetest.add_particle(
-					{x=pposx-24+math.random(0,48), y=pposy+16, z=pposz-24+math.random(0,48)}, -- posi
-					{x=0, y=-8, z=-1}, -- velo
-					{x=0, y=0, z=0}, -- acce
-					4,
-					2.8,
-					false,
-					"snowdrift_raindrop.png",
-					player:get_player_name()
-				)
+				minetest.add_particle({
+					pos = {x=pposx-24+math.random(0,48), y=pposy+16, z=pposz-24+math.random(0,48)},
+					vel = {x=0, y=-8, z=-1},
+					acc = {x=0, y=0, z=0},
+					expirationtime = 4,
+					size = 2.8,
+					collisiondetection = false,
+					vertical = false,
+					texture = "snowdrift_raindrop.png",
+					playername = player:get_player_name(),
+				})
 			end
 		end			
 	end
