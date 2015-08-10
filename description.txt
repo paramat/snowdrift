@@ -1,0 +1,1 @@
+This mod adds weather effects such as snowfall, rain, and settling snow.
