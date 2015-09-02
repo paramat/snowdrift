@@ -1,4 +1,4 @@
-snowdrift 0.3.0 by paramat
-For latest stable Minetest and back to 0.4.9 dev after 13/01/14
+snowdrift 0.4.0 by paramat
+For Minetest 0.4.12 and later
 Depends default
 Licenses: code WTFPL, textures CC BY-SA
