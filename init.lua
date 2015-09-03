@@ -1,14 +1,22 @@
+-- TODO rework logic
+
 -- Parameters
 
-local SCALP = 11 -- Time scale for precipitation variation in minutes
-local PRET = -1 -- -1 to 1. Precipitation threshold:
-				-- 1 none, -1 continuous, -0.3 two thirds the time,
-				-- 0 half the time, 0.3 one third the time.
-local PPPCHA = 0.1 -- 0 to 1. Per player processing chance.
-					-- Controls and randomizes processing load.
-local SETCHA = 0.2 -- 0 to 1. Snow settling chance
-local FLAKES = 8 -- Snowfall heaviness. Try 1 on slower computers.
+local SCALP = 23 -- Time scale for precipitation variation in minutes
+local PRET = -1 -- Precipitation noise threshold:
+				-- -1 continuous, -0.3 two thirds the time,
+				-- 0 half the time, 0.3 one third the time, 1 none.
+local PPPCHA = 0.1 -- Per player processing chance.
+local FLAKES = 8 -- Snowflake density
+local NISVAL = 31 -- Snow clouds RGB value at night
+local DASVAL = 127 -- Snow clouds RGB value in daytime
 local SETTLE = false -- Snow collects on ground within 32 nodes of player
+local SETCHA = 0.2 -- 0 to 1. Snow settling chance
+
+
+-- Stuff
+
+local difsval = DASVAL - NISVAL
 
 
 -- Detect mapgen to select noise parameters
@@ -34,18 +42,21 @@ end
 
 minetest.register_globalstep(function(dtime)
 	local perlinp = minetest.get_perlin(813, 1, 0.5, SCALP)
+	-- check if snow is currently falling
 	if perlinp:get2d({x = os.clock() / 60, y = 0}) < PRET then
 		return
 	end 
 	for _, player in ipairs(minetest.get_connected_players()) do
+		-- randomise and spread processing load
 		if math.random() > PPPCHA then
 			return
 		end
+		-- check if undercover
 		local ppos = player:getpos()
 		if minetest.get_node_light(ppos, 0.5) ~= 15 then
 			return
 		end
-
+		-- check if in snow biome
 		local pposx = math.floor(ppos.x)
 		local pposy = math.floor(ppos.y)
 		local pposz = math.floor(ppos.z)
@@ -56,28 +67,43 @@ minetest.register_globalstep(function(dtime)
 		else
 			noiset = perlint:get2d({x = pposx, y = pposz})
 		end
-
+		-- if in snow biome
 		if noiset <= TTHR then
-			-- TODO set sky darkness depending on time of day
-			-- set number of flakes from TTHR - noiset
+			-- set sky to snow clouds
+			-- first transition (24000 -) 4500, (1 -) 0.1875
+			-- last transition (24000 -) 5750, (1 -) 0.2396
 			if math.random() < 0.1 then
-				player:set_sky({r = 143, g = 143, b = 143, a = 255}, "plain", {})
-			end
+				local sval
+				local time = minetest.get_timeofday()
+				if time >= 0.5 then
+					time = 1 - time
+				end
 
+				if time <= 0.1875 then
+					sval = NISVAL
+				elseif time >= 0.2396 then
+					sval = DASVAL
+				else
+					sval = math.floor(NISVAL + ((time - 0.1875) / 0.0521) * difsval)
+				end
+
+				player:set_sky({r = sval, g = sval, b = sval + 16, a = 255}, "plain", {})
+			end
+			-- snowfall
 			for flake = 1, FLAKES do
 				minetest.add_particle({
 					pos = {
-						x = pposx - 32 + math.random(0,63),
-						y = pposy + 16,
-						z = pposz - 16 + math.random(0,63)
+						x = pposx - 32 + math.random(0, 63),
+						y = pposy + 11 + math.random(),
+						z = pposz - 8 + math.random(0, 63)
 					},
 					vel = {
-						x = math.random() * 0.2 - 0.1,
-						y = math.random() * 0.2 - 1.1,
-						z = math.random() * 0.2 - 1.1
+						x = -0.1 + math.random() * 0.2,
+						y = -1.1 + math.random() * 0.2,
+						z = -2.1 + math.random() * 0.2
 					},
 					acc = {x = 0, y = 0, z = 0},
-					expirationtime = 32,
+					expirationtime = 24,
 					size = 2.8,
 					collisiondetection = false,
 					vertical = false,
@@ -85,7 +111,7 @@ minetest.register_globalstep(function(dtime)
 					playername = player:get_player_name()
 				})
 			end
-
+			-- snow settling
 			if SETTLE and math.random() < SETCHA then -- settling snow
 				local sposx = pposx - 32 + math.random(0, 63)
 				local sposz = pposz - 32 + math.random(0, 63)
@@ -133,6 +159,7 @@ minetest.register_globalstep(function(dtime)
 					end
 				end
 			end
+		-- reset sky to normal
 		elseif math.random() < 0.1 then
 			player:set_sky({}, "regular", {})
 		end
