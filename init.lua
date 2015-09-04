@@ -1,13 +1,13 @@
 -- Parameters
 
-local PRECSPR = 23 -- Time scale for precipitation variation in minutes
+local PRECSPR = 11 -- Time scale for precipitation variation in minutes
 local PRECTHR = -1 -- Precipitation noise threshold:
 				-- -1 continuous, -0.3 two thirds the time,
 				-- 0 half the time, 0.3 one third the time, 1 none.
 local PROCHA = 0.1 -- Per player per globalstep processing chance
-local FLAKES = 8 -- Snowflake density
-local NISVAL = 31 -- Snow clouds RGB value at night
-local DASVAL = 135 -- Snow clouds RGB value in daytime
+local FLAKES = 32 -- Snowflake density
+local NISVAL = 39 -- Snow clouds RGB value at night
+local DASVAL = 175 -- Snow clouds RGB value in daytime
 
 
 -- Stuff
@@ -72,7 +72,7 @@ minetest.register_globalstep(function(dtime)
 		local nval_temp
 		if mg_params.mgname == "v6" then
 			nval_temp = nobj_temp:get2d({x = pposx + 300, y = pposz + 100})
-		else
+		else -- mgv5, mgv7
 			nval_temp = nobj_temp:get2d({x = pposx, y = pposz})
 		end
 		local snowbiome = nval_temp <= tempthr
@@ -115,17 +115,17 @@ minetest.register_globalstep(function(dtime)
 			for flake = 1, FLAKES do
 				minetest.add_particle({
 					pos = {
-						x = pposx - 32 + math.random(0, 63),
+						x = pposx - 48 + math.random(0, 95),
 						y = pposy + 12 + math.random(),
-						z = pposz - 20 + math.random(0, 63)
+						z = pposz - 36 + math.random(0, 95)
 					},
 					vel = {
 						x = -0.1 + math.random() * 0.2,
-						y = -1.1 + math.random() * 0.2,
+						y = -1.6 + math.random() * 0.2,
 						z = -1.1 + math.random() * 0.2
 					},
 					acc = {x = 0, y = 0, z = 0},
-					expirationtime = 24,
+					expirationtime = 16,
 					size = 2.8,
 					collisiondetection = false,
 					vertical = false,
