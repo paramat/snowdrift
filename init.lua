@@ -1,10 +1,10 @@
 -- Parameters
 
-local PRECSPR = 11 -- Time scale for precipitation variation in minutes
-local PRECOFF = 0.8 -- Precipitation noise threshold offset
-local PROCHA = 0.2 -- Per player per globalstep processing chance
-local FLAKES = 8 -- Snowflake density
-local DROPS = 16 -- Rainfall density
+local PRECSPR = 6 -- Time scale for precipitation variation in minutes
+local PRECOFF = -0.4 -- Precipitation offset, higher = rains more often
+local GSCYCLE = 0.5 -- Globalstep cycle (seconds)
+local FLAKES = 16 -- Snowflakes per cycle
+local DROPS = 32 -- Raindrops per cycle
 local NISVAL = 39 -- Clouds RGB value at night
 local DASVAL = 175 -- Clouds RGB value in daytime
 
@@ -58,17 +58,25 @@ local nobj_prec = nil
 
 -- Globalstep function
 
+local handles = {}
+local timer = 0
+
 minetest.register_globalstep(function(dtime)
+	timer = timer + dtime
+	if timer < GSCYCLE then
+		return
+	end
+
+	timer = 0
+
 	for _, player in ipairs(minetest.get_connected_players()) do
-		-- Randomise and spread processing load
-		if math.random() > PROCHA then
-			return
-		end
+		local player_name = player:get_player_name()
 
 		local ppos = player:getpos()
 		local pposx = math.floor(ppos.x)
-		local pposy = math.floor(ppos.y)
+		local pposy = math.floor(ppos.y) + 2 -- Precipitation when swimming
 		local pposz = math.floor(ppos.z)
+		local ppos = {x = pposx, y = pposy, z = pposz}
 
 		local nobj_temp = nobj_temp or minetest.get_perlin(np_temp)
 		local nobj_humid = nobj_humid or minetest.get_perlin(np_humid)
@@ -78,16 +86,22 @@ minetest.register_globalstep(function(dtime)
 		local nval_humid = nobj_humid:get2d({x = pposx, y = pposz})
 		local nval_prec = nobj_prec:get2d({x = os.clock() / 60, y = 0})
 
-		-- Biome system: frozen biomes below heat 35,
-		-- deserts below humidity 20
+		-- Biome system: frozen biomes below heat 35.
+		-- deserts below line 14 * t - 95 * h = -1496
+		-- h = (14 * t + 1496) / 95
+		-- h = 14/95 * t + 1496/95 where 1496/95 is y intersection
+		-- h - 14/95 t = 1496/95 y intersection
+		-- so area above line is
+		-- h - 14/95 t > 1496/95
 		local freeze = nval_temp < 35
-		local precip = nval_prec > (nval_humid - 50) / 50 + PRECOFF
+		local precip = nval_prec < (nval_humid - 50) / 50 + PRECOFF and
+			nval_humid - (14 / 95) * nval_temp > 1496 / 95
 
 		-- Check if player is outside
 		local outside = minetest.get_node_light(ppos, 0.5) == 15
 
 		-- Occasionally reset player sky
-		if math.random() < 0.05 then
+		if math.random() < 0.1 then
 			if precip then
 				-- Set overcast sky
 				local sval
@@ -111,6 +125,14 @@ minetest.register_globalstep(function(dtime)
 			else
 				-- Reset sky to normal
 				player:set_sky({}, "regular", {})
+			end
+		end
+
+		if not precip or not outside or freeze then
+			if handles[player_name] then
+				-- Stop sound if playing
+				minetest.sound_stop(handles[player_name])
+				handles[player_name] = nil
 			end
 		end
 
@@ -161,6 +183,21 @@ minetest.register_globalstep(function(dtime)
 						texture = "snowdrift_raindrop.png",
 						playername = player:get_player_name()
 					})
+				end
+
+				if not handles[player_name] then
+					-- Start sound if not playing
+					local handle = minetest.sound_play(
+						"snowdrift_rain",
+						{
+							to_player = player_name,
+							gain = 0.2,
+							loop = true,
+						}
+					)
+					if handle then
+						handles[player_name] = handle
+					end
 				end
 			end
 		end
