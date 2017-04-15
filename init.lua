@@ -4,7 +4,9 @@ local PRECSPR = 6 -- Time scale for precipitation variation in minutes
 local PRECOFF = -0.4 -- Precipitation offset, higher = rains more often
 local GSCYCLE = 0.5 -- Globalstep cycle (seconds)
 local FLAKES = 16 -- Snowflakes per cycle
-local DROPS = 32 -- Raindrops per cycle
+local DROPS = 64 -- Raindrops per cycle
+local RAINGAIN = 0.2 -- Rain sound volume
+local COLLIDE = false -- Whether particles collide with nodes
 local NISVAL = 39 -- Clouds RGB value at night
 local DASVAL = 175 -- Clouds RGB value in daytime
 
@@ -47,6 +49,8 @@ local np_humid = {
 -- Stuff
 
 local difsval = DASVAL - NISVAL
+local grad = 14 / 95
+local yint = 1496 / 95
 
 
 -- Initialise noise objects to nil
@@ -86,16 +90,17 @@ minetest.register_globalstep(function(dtime)
 		local nval_humid = nobj_humid:get2d({x = pposx, y = pposz})
 		local nval_prec = nobj_prec:get2d({x = os.clock() / 60, y = 0})
 
-		-- Biome system: frozen biomes below heat 35.
+		-- Biome system: Frozen biomes below heat 35,
 		-- deserts below line 14 * t - 95 * h = -1496
 		-- h = (14 * t + 1496) / 95
-		-- h = 14/95 * t + 1496/95 where 1496/95 is y intersection
+		-- h = 14/95 * t + 1496/95
+		-- where 14/95 is gradient and 1496/95 is y intersection
 		-- h - 14/95 t = 1496/95 y intersection
 		-- so area above line is
 		-- h - 14/95 t > 1496/95
 		local freeze = nval_temp < 35
 		local precip = nval_prec < (nval_humid - 50) / 50 + PRECOFF and
-			nval_humid - (14 / 95) * nval_temp > 1496 / 95
+			nval_humid - grad * nval_temp > yint
 
 		-- Check if player is outside
 		local outside = minetest.get_node_light(ppos, 0.5) == 15
@@ -109,7 +114,6 @@ minetest.register_globalstep(function(dtime)
 				if time >= 0.5 then
 					time = 1 - time
 				end
-
 				-- Sky brightness transitions:
 				-- First transition (24000 -) 4500, (1 -) 0.1875
 				-- Last transition (24000 -) 5750, (1 -) 0.2396
@@ -143,9 +147,9 @@ minetest.register_globalstep(function(dtime)
 				for flake = 1, FLAKES do
 					minetest.add_particle({
 						pos = {
-							x = pposx - 32 + math.random(0, 63),
-							y = pposy + 10 + math.random(0, 4),
-							z = pposz - 26 + math.random(0, 63)
+							x = pposx - 24 + math.random(0, 47),
+							y = pposy + 8 + math.random(0, 1),
+							z = pposz - 20 + math.random(0, 47)
 						},
 						vel = {
 							x = 0.0,
@@ -153,9 +157,10 @@ minetest.register_globalstep(function(dtime)
 							z = -1.0
 						},
 						acc = {x = 0, y = 0, z = 0},
-						expirationtime = 12,
+						expirationtime = 8.5,
 						size = 2.8,
-						collisiondetection = false,
+						collisiondetection = COLLIDE,
+						collision_removal = true,
 						vertical = false,
 						texture = "snowdrift_snowflake" .. math.random(1, 4) .. ".png",
 						playername = player:get_player_name()
@@ -167,18 +172,19 @@ minetest.register_globalstep(function(dtime)
 					minetest.add_particle({
 						pos = {
 							x = pposx - 8 + math.random(0, 16),
-							y = pposy + 6 + math.random(0, 4),
+							y = pposy + 8 + math.random(0, 5),
 							z = pposz - 8 + math.random(0, 16)
 						},
 						vel = {
 							x = 0.0,
-							y = -8.0,
+							y = -10.0,
 							z = 0.0
 						},
 						acc = {x = 0, y = 0, z = 0},
-						expirationtime = 2,
+						expirationtime = 2.1,
 						size = 2.8,
-						collisiondetection = false,
+						collisiondetection = COLLIDE,
+						collision_removal = true,
 						vertical = true,
 						texture = "snowdrift_raindrop.png",
 						playername = player:get_player_name()
@@ -191,7 +197,7 @@ minetest.register_globalstep(function(dtime)
 						"snowdrift_rain",
 						{
 							to_player = player_name,
-							gain = 0.2,
+							gain = RAINGAIN,
 							loop = true,
 						}
 					)
@@ -201,5 +207,16 @@ minetest.register_globalstep(function(dtime)
 				end
 			end
 		end
+	end
+end)
+
+
+-- Stop sound and remove player handle on leaveplayer
+
+minetest.register_on_leaveplayer(function(player)
+	local player_name = player:get_player_name()
+	if handles[player_name] then
+		minetest.sound_stop(handles[player_name])
+		handles[player_name] = nil
 	end
 end)
