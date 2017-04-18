@@ -104,9 +104,6 @@ minetest.register_globalstep(function(dtime)
 			local precip = nval_prec < (nval_humid - 50) / 50 + PRECOFF and
 				nval_humid - grad * nval_temp > yint
 
-			-- Check if player is outside
-			local outside = minetest.get_node_light(ppos, 0.5) == 15
-
 			-- Occasionally reset player sky
 			if math.random() < 0.1 then
 				if precip then
@@ -134,63 +131,64 @@ minetest.register_globalstep(function(dtime)
 				end
 			end
 
-			if not precip or not outside or freeze then
-				if handles[player_name] then
-					-- Stop sound if playing
-					minetest.sound_stop(handles[player_name])
-					handles[player_name] = nil
-				end
-			end
-
-			if precip and outside then
+			local outside_quota = 0
+			if precip then
 				-- Precipitation
 				if freeze then
 					-- Snowfall
 					for flake = 1, FLAKES do
-						minetest.add_particle({
-							pos = {
-								x = pposx - 24 + math.random(0, 47),
-								y = pposy + 8 + math.random(0, 1),
-								z = pposz - 20 + math.random(0, 47)
-							},
-							vel = {
-								x = 0.0,
-								y = -2.0,
-								z = -1.0
-							},
-							acc = {x = 0, y = 0, z = 0},
-							expirationtime = 8.5,
-							size = 2.8,
-							collisiondetection = COLLIDE,
-							collision_removal = true,
-							vertical = false,
-							texture = "snowdrift_snowflake" .. math.random(1, 4) .. ".png",
-							playername = player:get_player_name()
-						})
+						local pos = {
+							x = pposx - 24 + math.random(0, 47),
+							y = pposy + 8 + math.random(0, 1),
+							z = pposz - 20 + math.random(0, 47)
+							}
+						if minetest.get_node_light(pos, 0.5) == 15 then
+							minetest.add_particle({
+								pos = pos,
+								vel = {
+									x = 0.0,
+									y = -2.0,
+									z = -1.0
+								},
+								acc = {x = 0, y = 0, z = 0},
+								expirationtime = 8.5,
+								size = 2.8,
+								collisiondetection = COLLIDE,
+								collision_removal = true,
+								vertical = false,
+								texture = "snowdrift_snowflake" .. math.random(1, 4) .. ".png",
+								playername = player:get_player_name()
+							})
+							outside_quota = outside_quota + 1 / FLAKES
+						end
 					end
 				else
 					-- Rainfall
 					for flake = 1, DROPS do
-						minetest.add_particle({
-							pos = {
-								x = pposx - 8 + math.random(0, 16),
-								y = pposy + 8 + math.random(0, 5),
-								z = pposz - 8 + math.random(0, 16)
-							},
-							vel = {
-								x = 0.0,
-								y = -10.0,
-								z = 0.0
-							},
-							acc = {x = 0, y = 0, z = 0},
-							expirationtime = 2.1,
-							size = 2.8,
-							collisiondetection = COLLIDE,
-							collision_removal = true,
-							vertical = true,
-							texture = "snowdrift_raindrop.png",
-							playername = player:get_player_name()
-						})
+						local pos = {
+							x = pposx - 8 + math.random(0, 16),
+							y = pposy + 8 + math.random(0, 5),
+							z = pposz - 8 + math.random(0, 16)
+							}
+						if minetest.get_node_light(pos, 0.5) == 15 then
+							minetest.add_particle({
+								pos = pos,
+								vel = {
+									x = 0.0,
+									y = -10.0,
+									z = 0.0
+								},
+								acc = {x = 0, y = 0, z = 0},
+								expirationtime = 2.1,
+								size = 2.8,
+								collisiondetection = COLLIDE,
+								collision_removal = true,
+								vertical = true,
+								texture = "snowdrift_raindrop.png",
+								playername = player:get_player_name()
+							})
+							outside_quota = outside_quota + 1 / DROPS
+						end
 					end
 
 					if not handles[player_name] then
@@ -209,6 +207,14 @@ minetest.register_globalstep(function(dtime)
 					end
 				end
 			end
+			if not precip or freeze or outside_quota < 0.3 then
+				if handles[player_name] then
+					-- Stop sound if playing
+					minetest.sound_stop(handles[player_name])
+					handles[player_name] = nil
+				end
+			end
+
 		elseif handles[player_name] then
 			-- Stop sound when player goes under y limit
 			minetest.sound_stop(handles[player_name])
