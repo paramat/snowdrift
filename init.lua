@@ -153,12 +153,12 @@ minetest.register_globalstep(function(dtime)
 								y = pposy + 8 + math.random(0, 1),
 								z = pposz - 20 + math.random(0, 47)
 							},
-							vel = {
+							velocity = {
 								x = 0.0,
 								y = -2.0,
 								z = -1.0
 							},
-							acc = {x = 0, y = 0, z = 0},
+							acceleration = {x = 0, y = 0, z = 0},
 							expirationtime = 8.5,
 							size = 2.8,
 							collisiondetection = COLLIDE,
@@ -177,12 +177,12 @@ minetest.register_globalstep(function(dtime)
 								y = pposy + 8 + math.random(0, 5),
 								z = pposz - 8 + math.random(0, 16)
 							},
-							vel = {
+							velocity = {
 								x = 0.0,
 								y = -10.0,
 								z = 0.0
 							},
-							acc = {x = 0, y = 0, z = 0},
+							acceleration = {x = 0, y = 0, z = 0},
 							expirationtime = 2.1,
 							size = 2.8,
 							collisiondetection = COLLIDE,
