@@ -194,6 +194,20 @@ minetest.register_globalstep(function(dtime)
 							outside_quota = outside_quota + 1 / FLAKES
 						end
 					end
+					if not handles[player_name] then
+						-- Start sound if not playing
+						local handle = minetest.sound_play(
+							"cobratronik_wind_artic_cold",
+							{
+								to_player = player_name,
+								loop = true,
+							}
+						)
+						if handle then
+							handles[player_name] = handle
+						end
+					end
+					
 				else
 					-- Rainfall
 					for flake = 1, DROPS do
@@ -239,7 +253,7 @@ minetest.register_globalstep(function(dtime)
 					end
 				end
 			end
-			if not precip or freeze or outside_quota < 0.3 then
+			if not precip or outside_quota < 0.3 then
 				if handles[player_name] then
 					-- Stop sound if playing
 					minetest.sound_stop(handles[player_name])
