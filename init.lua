@@ -177,12 +177,12 @@ minetest.register_globalstep(function(dtime)
 						if minetest.get_node_light(pos, 0.5) == 15 then
 							minetest.add_particle({
 								pos = pos,
-								vel = {
+								velocity = {
 									x = 0.0,
 									y = -2.0,
 									z = -1.0
 								},
-								acc = {x = 0, y = 0, z = 0},
+								acceleration = {x = 0, y = 0, z = 0},
 								expirationtime = 8.5,
 								size = 2.8,
 								collisiondetection = COLLIDE,
@@ -205,12 +205,12 @@ minetest.register_globalstep(function(dtime)
 						if minetest.get_node_light(pos, 0.5) == 15 then
 							minetest.add_particle({
 								pos = pos,
-								vel = {
+								velocity = {
 									x = 0.0,
 									y = -10.0,
 									z = 0.0
 								},
-								acc = {x = 0, y = 0, z = 0},
+								acceleration = {x = 0, y = 0, z = 0},
 								expirationtime = 2.1,
 								size = 2.8,
 								collisiondetection = COLLIDE,
