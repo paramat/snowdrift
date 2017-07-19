@@ -1,5 +1,6 @@
 -- Parameters
 
+weather = "default"
 local YLIMIT = 1 -- Set to world's water level or level of lowest open area,
 				-- calculations are disabled below this y.
 local PRECSPR = 6 -- Time scale for precipitation variation in minutes
@@ -62,6 +63,24 @@ local nobj_humid = nil
 local nobj_prec = nil
 
 
+-- Privilege weather
+minetest.register_privilege("weather", {
+	description = "Force the weather",
+	give_to_singleplayer = false
+})
+
+
+-- Commande to force weather
+minetest.register_chatcommand("weather", {
+	params = "<rain|snow|clear|default>",
+	description = "Force the weather to rain, snow or clear, without limit of time. Use default to let it do.",
+	privs = {weather = true},
+	func = function(name, param)
+		weather = param
+	end
+})
+
+
 -- Globalstep function
 
 local handles = {}
@@ -100,9 +119,22 @@ minetest.register_globalstep(function(dtime)
 			-- h - 14/95 t = 1496/95 y intersection
 			-- so area above line is
 			-- h - 14/95 t > 1496/95
-			local freeze = nval_temp < 35
-			local precip = nval_prec < (nval_humid - 50) / 50 + PRECOFF and
-				nval_humid - grad * nval_temp > yint
+			
+			local freeze
+				if (weather == "snow") then
+					freeze = true
+				else
+					freeze = nval_temp < 35
+				end
+			
+			local precip
+				if (weather == "default") then
+					precip = nval_prec < (nval_humid - 50) / 50 + PRECOFF and
+					nval_humid - grad * nval_temp > yint
+				elseif (weather == "clear") then -- To force the weather with commands
+					precip = false
+				else precip = true
+				end
 
 			-- Occasionally reset player sky
 			if math.random() < 0.1 then
