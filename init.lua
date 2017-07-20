@@ -30,7 +30,23 @@ minetest.register_globalstep(function(dtime)
 			if precip then
 				-- Precipitation
 				if freeze then
-				else
+
+
+					if not handles[player_name] then
+						-- Start sound if not playing
+						local handle = minetest.sound_play(
+							"cobratronik_wind_artic_cold",
+							{
+								to_player = player_name,
+								loop = true,
+							}
+						)
+						if handle then
+							handles[player_name] = handle
+						end
+					end
+
+
 		end
 	end
 end)
