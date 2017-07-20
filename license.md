@@ -1,7 +1,26 @@
-License of source code
-----------------------
+#Licenses
 
-The MIT License (MIT)
+##Licences of :
+
+* Source code
+MIT by paramat
+WTFPL by Spirita
+
+* Media
+
+1. Textures
+All : CC BY-SA (3.0) by paramat
+
+2. Sounds
+  - snowdrift_rain : CC BY (3.0) by inchadney (http://freesound.org/people/inchadney/sounds/58835/)
+  - cobratronik_wind_artic_cold : cc0 by cobratronik (https://freesound.org/people/cobratronik/sounds/117136/)
+
+
+##Details of licences
+
+* License of source code
+
+ - The MIT License (MIT)
 Copyright (C) 2017 paramat
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this
@@ -24,10 +43,9 @@ For more details:
 https://opensource.org/licenses/MIT
 
 
-License of media (textures)
----------------------------
+* License of media (textures)
 
-Attribution-ShareAlike 3.0 Unported (CC BY-SA 3.0)
+ - Attribution-ShareAlike 3.0 Unported (CC BY-SA 3.0)
 Copyright (C) 2017 paramat
 
 You are free to:
@@ -59,10 +77,9 @@ For more details:
 http://creativecommons.org/licenses/by-sa/3.0/
 
 
-License of media (sounds)
--------------------------
+* License of media (sounds)
 
-Attribution 3.0 Unported (CC BY 3.0)
+ - Attribution 3.0 Unported (CC BY 3.0)
 Copyright (C) 2008 inchadney
 
 You are free to:
@@ -91,10 +108,7 @@ For more details:
 http://creativecommons.org/licenses/by/3.0/
 
 
-------
-
-
-CC0 1.0 Universal (CC0 1.0)
+ - CC0 1.0 Universal (CC0 1.0)
 Public Domain Dedication
 
 Disclaimer : This is a human-readable summary of the Legal Code (read the full text).
