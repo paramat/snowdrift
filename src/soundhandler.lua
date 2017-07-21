@@ -1,6 +1,6 @@
 --[[ snowdrift/src/soundhandler.lua
 File to handle sound of the weather.
-Version :
+Version : release v0.7.0
 ]]
 
 
@@ -12,7 +12,12 @@ local RAINGAIN = 0.2
 local SNOWGAIN = 0.3
 
 local OUTSIDE_QUOTA = 0.3 -- minimum of emmited particles to play a sound
+
+-- Variables
+
 local handles = {}
+local bool_previous_quota = false
+
 
 -- Register
 -- ========
@@ -31,25 +36,38 @@ end)
 -- Functions
 -- =========
 
+-- About the quota
+--[[ snowdrift.is_weather_changed(weather)
+To detect if the quota change of side of limit.
+Return true if it changes
+]]
+function snowdrift.is_bool_quota_changed(quota)
+	local new_bool_qota = not (quota < OUTSIDE_QUOTA)
+	local has_changed = (bool_previous_quota ~= new_bool_qota)
+	bool_previous_quota = new_bool_qota
+	return has_changed
+end
+
+
 --  to play sound
 
---[[ snowdrift.set_sound_for_particles(quota, has_changed, weather, player)
+--[[ snowdrift.set_sound_for_particles(quota, wheather_has_changed, weather, player)
 Play (or stop) the sound according the weather if it's not already played.
 quota : percent of particules that have been generated
 has_changed : if the weather have changed
 weather : the weather to play the according sound
 player : the player to play the sound
 ]]
-function snowdrift.set_sound_for_particles(quota, has_changed, weather, player)
+function snowdrift.set_sound_for_particles(quota, wheather_has_changed, weather, player)
 	local player_name = player:get_player_name()
-	if quota < OUTSIDE_QUOTA then
+	if (snowdrift.is_bool_quota_changed(quota) or wheather_has_changed) then
 		snowdrift.stop_sound(player_name)
-	elseif has_changed then
-		snowdrift.stop_sound(player_name)
-		if (weather == "rain") then -- need new sound
-			snowdrift.set_sound_rain(player_name)
-		elseif (weather == "snow") then
-			snowdrift.set_sound_snow(player_name)
+		if bool_previous_quota then
+			if (weather == "rain") then -- need new sound
+				snowdrift.set_sound_rain(player_name)
+			elseif (weather == "snow") then
+				snowdrift.set_sound_snow(player_name)
+			end
 		end
 	end
 end
