@@ -1,24 +1,6 @@
 #Licenses
 
-##Licences of :
-
-* Source code
-MIT by paramat
-WTFPL by Spirita
-
-* Media
-
-1. Textures
-All : CC BY-SA (3.0) by paramat
-
-2. Sounds
-  - snowdrift_rain : CC BY (3.0) by inchadney (http://freesound.org/people/inchadney/sounds/58835/)
-  - cobratronik_wind_artic_cold : cc0 by cobratronik (https://freesound.org/people/cobratronik/sounds/117136/)
-
-
-##Details of licences
-
-* License of source code
+##License of source code
 
  - The MIT License (MIT)
 Copyright (C) 2017 paramat
@@ -43,7 +25,7 @@ For more details:
 https://opensource.org/licenses/MIT
 
 
-* License of media (textures)
+##License of textures
 
  - Attribution-ShareAlike 3.0 Unported (CC BY-SA 3.0)
 Copyright (C) 2017 paramat
@@ -77,7 +59,7 @@ For more details:
 http://creativecommons.org/licenses/by-sa/3.0/
 
 
-* License of media (sounds)
+##License of sounds
 
  - Attribution 3.0 Unported (CC BY 3.0)
 Copyright (C) 2008 inchadney
