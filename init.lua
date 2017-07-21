@@ -1,7 +1,7 @@
 --[[ snowdrift/src/init.lua
 Main file of the mod snowdrift.
 Include other file and launch the main loop.
-Version :
+Version : release v0.7.0
 ]]
 
 -- Mod name

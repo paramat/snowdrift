@@ -1,6 +1,6 @@
 --[[ snowdrift/src/skyparticleshandler.lua
 File to handle the particules emitted by the sky.
-Version :
+Version : release v0.7.0
 ]]
 
 

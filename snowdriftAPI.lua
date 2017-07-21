@@ -1,6 +1,6 @@
 --[[ snowdrift/src/snowdriftAPI.lua
 File defining the API of the mod snowdrift.
-Version :
+Version : release v0.7.0
 ]]
 
 

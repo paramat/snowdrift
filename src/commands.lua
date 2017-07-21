@@ -1,13 +1,13 @@
 --[[ snowdrift/src/commands.lua
 File for privileges and chat commandes registration.
-Version :
+Version : release v0.7.0
 ]]
 
 
 -- Privilege weather
 minetest.register_privilege("weather", {
 	description = "Force the weather",
-	give_to_singleplayer = true
+	give_to_singleplayer = false
 })
 
 

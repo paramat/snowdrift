@@ -1,6 +1,6 @@
 --[[ snowdrift/src/calculation.lua
 File of functions about calculations of snowdrift.
-Version :
+Version : release v0.7.0
 ]]
 
 

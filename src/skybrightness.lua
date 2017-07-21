@@ -1,6 +1,6 @@
 --[[ snowdrift/src/skybrightness.lua
 File to manage the modification of the brightness of sky.
-Version :
+Version : release v0.7.0
 ]]
 
 

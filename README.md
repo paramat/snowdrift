@@ -19,11 +19,23 @@ It avoid abm and useless calculations.
 
 ##2 Current version
 
-**Your on a devellopement branch.**
-**Perhaps your looking for the last release ?**
-**Last release : v0.6.0**
-**Tested with Minetest 0.4.13**
+Current :
+v0.7.0
+Tested with Minetest 0.4.13
+
+Previous :
+v0.6.0
+Tested with Minetest 0.4.13
 https://github.com/Spirita/snowdrift/releases/tag/v0.6.0
+
+Changelog since v0.6.0 :
+* Features
+ - Add sound for snow
+* Technique
+ - Split code in thematiques files
+ - Wrap code into functions
+ - Create a structure of folder for files of code
+ - Write doc for files, some variables and functions
 
 
 ##3 Licenses
@@ -52,7 +64,7 @@ All : CC BY-SA (3.0) by paramat
 
 
 ##5 Technique
-- No abm, calculations proceed only if need
+- No abm, calculations proceed only if needed
 -> server friendly
 
 - Calcul for each player using their position, not a global weather
@@ -78,8 +90,7 @@ https://github.com/Spirita/snowdrift/releases/
 
  - Other version (at your own risk)
 https://github.com/paramat/snowdrift/
-https://github.com/Spirita/snowdrift/
-Or on the other user branch or pull request.
+Or on branch or pull request from the other users.
 
 * Instalation
 
