@@ -44,7 +44,6 @@ See license.md
 * Source code
 MIT by paramat
 MIT by bell07
-LGPL by Jeija (from minetest-mod-weather)
 WTFPL by Spirita
 
 * Media
@@ -96,14 +95,19 @@ Or on branch or pull request from the other users.
 
 2 ways :
  - with the zip
+ 
 Download the zip of the release.
+
 Uncompress it in your mods folder fot Minetest.
+
 Rename it "snowdrift".
 
- - with git clone
-Open a terminal and go in your mods folder fot Minetest.
+ - with git
+Open a terminal and go in your mods folder for Minetest.
 
-'git clone <url>'
+'git clone url_of_the_depot'
+
+You can update it with 'git pull'.
 
 
 ##8 Bug and feedback
