@@ -50,13 +50,13 @@ Return the percent of particules that have been generated.
 function snowdrift.set_particules_snow(player, ppos)
 	local outside_quota = 0
 	for flake = 1, FLAKES do
-		local box = snowdrift.addvectors(ppos, SNOWBOX)
+		local box = vector.add(ppos, SNOWBOX)
 		local random_vector = { 
 			x = math.random(0, 47),
 			y = math.random(0, 1),
 			z = math.random(0, 47)
 		}
-		local pos = snowdrift.addvectors(box, random_vector)
+		local pos = vector.add(box, random_vector)
 		if minetest.get_node_light(pos, 0.5) == 15 then
 			minetest.add_particle({
 				pos = pos,
@@ -84,13 +84,13 @@ Return the percent of particules that have been generated.
 function snowdrift.set_particules_rain(player, ppos)
 	local outside_quota = 0
 	for drop = 1, DROPS do
-		local box = snowdrift.addvectors(ppos, RAINBOX)
+		local box = vector.add(ppos, RAINBOX)
 		local random_vector = { 
 			x = math.random(0, 16),
 			y =  math.random(0, 5),
 			z =  math.random(0, 16)
 		}
-		local pos = snowdrift.addvectors(box, random_vector)
+		local pos = vector.add(box, random_vector)
 		if minetest.get_node_light(pos, 0.5) == 15 then
 			minetest.add_particle({
 				pos = pos,
