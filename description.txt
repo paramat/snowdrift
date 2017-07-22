@@ -1,0 +1,2 @@
+Snowdrift is a server friendly mod that add weather effects with their sound effects.
+It avoid abm and useless calculations.
