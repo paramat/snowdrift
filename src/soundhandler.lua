@@ -19,24 +19,11 @@ local handles = {}
 local bool_previous_quota = false
 
 
--- Register
--- ========
-
--- Stop sound and remove player handle on leaveplayer
-
-minetest.register_on_leaveplayer(function(player)
-	local player_name = player:get_player_name()
-	if handles[player_name] then
-		minetest.sound_stop(handles[player_name])
-		handles[player_name] = nil
-	end
-end)
-
-
 -- Functions
 -- =========
 
 -- About the quota
+
 --[[ snowdrift.is_weather_changed(weather)
 To detect if the quota change of side of limit.
 Return true if it changes

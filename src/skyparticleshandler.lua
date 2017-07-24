@@ -57,7 +57,7 @@ function snowdrift.set_particules_snow(player, ppos)
 			z = math.random(0, 47)
 		}
 		local pos = vector.add(box, random_vector)
-		if minetest.get_node_light(pos, 0.5) == 15 then
+		if snowdrift.is_outside(pos) then
 			minetest.add_particle({
 				pos = pos,
 				velocity = SNOWVELOCITY,
@@ -91,7 +91,7 @@ function snowdrift.set_particules_rain(player, ppos)
 			z =  math.random(0, 16)
 		}
 		local pos = vector.add(box, random_vector)
-		if minetest.get_node_light(pos, 0.5) == 15 then
+		if snowdrift.is_outside(pos) then
 			minetest.add_particle({
 				pos = pos,
 				velocity = RAINVELOCITY,

@@ -33,6 +33,7 @@ local GSCYCLE = 0.5 -- Globalstep cycle (seconds)
 -- Cleanning on leaveplayer
 minetest.register_on_leaveplayer(function(player)
 	local player_name = player:get_player_name()
+	snowdrift.stop_sound(player_name)
 	snowdrift.clean_previous_weather(player_name)
 end)
 
