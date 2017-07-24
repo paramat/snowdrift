@@ -91,9 +91,16 @@ https://github.com/Spirita/snowdrift/releases/
 https://github.com/paramat/snowdrift/
 Or on branch or pull request from the other users.
 
-* Instalation
+* Installation
 
 2 ways :
+ - with git
+Open a terminal and go in your mods folder for Minetest.
+
+'git clone url_of_the_depot'
+
+You can update it with 'git pull'.
+
  - with the zip
  
 Download the zip of the release.
@@ -101,13 +108,6 @@ Download the zip of the release.
 Uncompress it in your mods folder fot Minetest.
 
 Rename it "snowdrift".
-
- - with git
-Open a terminal and go in your mods folder for Minetest.
-
-'git clone url_of_the_depot'
-
-You can update it with 'git pull'.
 
 
 ##8 Bug and feedback
