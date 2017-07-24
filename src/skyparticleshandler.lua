@@ -1,7 +1,5 @@
---[[ snowdrift/src/skyparticleshandler.lua
-File to handle the particules emitted by the sky.
-Version : release v0.7.0
-]]
+--- snowdrift/src/skyparticleshandler.lua
+-- File to handle the particules emitted by the sky.
 
 
 -- Configuration
@@ -28,10 +26,11 @@ local SNOWACCELERATION = {x = 0, y = 0, z = 0}
 -- Function
 -- ========
 
---[[ snowdrift.set_particules(weather, player, ppos)
-Spawn particules for the given player around its corresponding position ppos and according to the given weather.
-Return the percent of particules that have been generated.
-]]
+--- Spawn particules for the given player around its corresponding position ppos and according to the given weather.
+-- @param weather create particules of that weather
+-- @param player the player who see particules
+-- @param ppos set particules around that position
+-- @return the percent of particules that have been generated.
 function snowdrift.set_particules(weather, player, ppos)
 	local player_name = player:get_player_name()
 	if (weather == "rain") then
@@ -43,10 +42,13 @@ function snowdrift.set_particules(weather, player, ppos)
 end
 
 
---[[ snowdrift.set_particules_snow(player, ppos)
-Spawn snow particules for the given player around its corresponding position ppos.
-Return the percent of particules that have been generated.
-]]
+-- Function local
+-- ==============
+
+--- Spawn snow particules for the given player around its corresponding position ppos. Called by snowdrift.set_particules(weather, player, ppos).
+-- @param player the player who see particules
+-- @param ppos set particules around that position
+-- @return the percent of particules that have been generated.
 function snowdrift.set_particules_snow(player, ppos)
 	local outside_quota = 0
 	for flake = 1, FLAKES do
@@ -77,10 +79,10 @@ function snowdrift.set_particules_snow(player, ppos)
 end
 
 
---[[ snowdrift.set_particules_rain(player, ppos)
-Spawn rain particules for the given player around its corresponding position ppos.
-Return the percent of particules that have been generated.
-]]
+--- Spawn rain particules for the given player around its corresponding position ppos. Called by snowdrift.set_particules(weather, player, ppos).
+-- @param player the player who see particules
+-- @param ppos set particules around that position
+-- @return the percent of particules that have been generated.
 function snowdrift.set_particules_rain(player, ppos)
 	local outside_quota = 0
 	for drop = 1, DROPS do

@@ -1,7 +1,5 @@
---[[ snowdrift/src/commands.lua
-File for privileges and chat commandes registration.
-Version : release v0.7.0
-]]
+--- snowdrift/src/commands.lua
+-- File for privileges and chat commandes registration.
 
 
 -- Privilege weather

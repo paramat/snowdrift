@@ -1,15 +1,14 @@
---[[ snowdrift/src/weathertrigger.lua
-File of the trigger of the weather.
-Version : release v0.7.0
-]]
+--- snowdrift/src/weathertrigger.lua
+-- File of the trigger of the weather.
+
 
 local previous_weather = {}
 
 
---[[ snowdrift.is_weather_changed(weather)
-Function to detect change of weather.
-Return true if the weather change
-]]
+--- Function to detect change of weather.
+-- @param weather new weather
+-- @param player concerned player
+-- @return true if the weather change
 function snowdrift.is_weather_changed(weather, player)
 	local player_name = player:get_player_name()
 	local has_changed
@@ -23,9 +22,8 @@ function snowdrift.is_weather_changed(weather, player)
 end
 
 
---[[ snowdrift.clean_previous_weather(player_name)
-Clean when player leave.
-]]
+--- Clean when player leave.
+-- @param player_name name of concerned player
 function snowdrift.clean_previous_weather(player_name)
 	previous_weather[player_name] = nil
 end

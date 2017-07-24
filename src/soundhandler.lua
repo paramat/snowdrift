@@ -1,7 +1,5 @@
---[[ snowdrift/src/soundhandler.lua
-File to handle sound of the weather.
-Version : release v0.7.0
-]]
+--- snowdrift/src/soundhandler.lua
+-- File to handle sound of the weather.
 
 
 -- Configuration
@@ -22,12 +20,10 @@ local bool_previous_quota = false
 -- Functions
 -- =========
 
--- About the quota
 
---[[ snowdrift.is_weather_changed(weather)
-To detect if the quota change of side of limit.
-Return true if it changes
-]]
+--- To detect if the quota change of side of limit.
+-- @param quota the 
+-- @return true if it changes
 function snowdrift.is_bool_quota_changed(quota)
 	local new_bool_qota = not (quota < OUTSIDE_QUOTA)
 	local has_changed = (bool_previous_quota ~= new_bool_qota)
@@ -36,15 +32,11 @@ function snowdrift.is_bool_quota_changed(quota)
 end
 
 
---  to play sound
-
---[[ snowdrift.set_sound_for_particles(quota, wheather_has_changed, weather, player)
-Play (or stop) the sound according the weather if it's not already played.
-quota : percent of particules that have been generated
-has_changed : if the weather have changed
-weather : the weather to play the according sound
-player : the player to play the sound
-]]
+--- Play (or stop) the sound according the weather if it's not already played.
+-- @param quota percent of particules that have been generated
+-- @param has_changed if the weather have changed
+-- @param weather the weather to play the according sound
+-- @param player the player to play the sound
 function snowdrift.set_sound_for_particles(quota, wheather_has_changed, weather, player)
 	local player_name = player:get_player_name()
 	if (snowdrift.is_bool_quota_changed(quota) or wheather_has_changed) then
@@ -60,9 +52,22 @@ function snowdrift.set_sound_for_particles(quota, wheather_has_changed, weather,
 end
 
 
---[[ snowdrift.set_sound_snow(player_name)
-Play the snow sound to the player called name.
-]]
+--- Stop sound to the player called name.
+-- @param player the player to stop the sound
+function snowdrift.stop_sound(player_name)
+	if handles[player_name] then
+		minetest.sound_stop(handles[player_name])
+		handles[player_name] = nil
+	end
+end
+
+
+-- Functions local
+-- ===============
+
+
+--- Play the snow sound to the player called name. Called by snowdrift.set_sound_for_particles(quota, wheather_has_changed, weather, player).
+-- @param player the player to play the sound
 function snowdrift.set_sound_snow(player_name)
 	local new_handle = minetest.sound_play(
 		"cobratronik_wind_artic_cold",
@@ -77,9 +82,8 @@ function snowdrift.set_sound_snow(player_name)
 end
 
 
---[[ snowdrift.set_sound_rain(player_name)
-Play the rain sound to the player called name.
-]]
+--- Play the rain sound to the player called name. Called by snowdrift.set_sound_for_particles(quota, wheather_has_changed, weather, player).
+-- @param player the player to play the sound
 function snowdrift.set_sound_rain(player_name)
 	local new_handle = minetest.sound_play(
 		"snowdrift_rain",
@@ -90,19 +94,6 @@ function snowdrift.set_sound_rain(player_name)
 		})
 	if new_handle then
 		handles[player_name] = new_handle
-	end
-end
-
-
---  to stop sound
-
---[[ snowdrift.set_sound_for_particles(player_name)
-Stop sound to the player called name.
-]]
-function snowdrift.stop_sound(player_name)
-	if handles[player_name] then
-		minetest.sound_stop(handles[player_name])
-		handles[player_name] = nil
 	end
 end
 

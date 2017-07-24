@@ -1,7 +1,5 @@
---[[ snowdrift/src/calculation.lua
-File of functions about calculations of snowdrift.
-Version : release v0.7.0
-]]
+--- snowdrift/src/calculation.lua
+-- File of functions about calculations of snowdrift.
 
 
 -- Configuration
@@ -67,10 +65,9 @@ local nobj_prec = nil
 -- Function to calculate position
 -- ==============================
 
---[[ snowdrift.ppos_for_player(player)
-Calculate the position to use for the given player.
-Return a table with a value for x, y and z.
-]]
+--- Calculate the position to use for the given player.
+-- @param player player to calculate the position
+-- @return a table with a value for x, y and z.
 function snowdrift.ppos_for_player(player)
 	local ppos = player:getpos()
 	local pposy = math.floor(ppos.y) + 2 -- Precipitation when swimming
@@ -83,11 +80,9 @@ end
 -- Function to calculate the weather
 -- =================================
 
---[[ snowdrift.weather_for_ppos(ppos)
-Calculate the weather for the given position.
-Return a string representing the weather, or nil if the weather is forced.
-String can be "rain", "snow" or "clear".
-]]
+--- Calculate the weather for the given position.
+-- @param ppos the position to calculate the weather
+-- @return a string representing the weather, or nil if the weather is forced. String can be "rain", "snow" or "clear".
 function snowdrift.weather_for_ppos(ppos)
 	if (snowdrift.force_weather ~="default") then -- Avoid calculations
 		return snowdrift.force_weather
@@ -130,9 +125,10 @@ so area above line is
 	end
 end
 
---[[ snowdrift.weather_for_player(player)
-Alias of snowdrift.weather_for_ppos(ppos) to use directly with player.
-]]
+--- Alias of snowdrift.weather_for_ppos(ppos) to use directly with player.
+-- @param player the player to take the position to calculate the weather
+-- @return the weather for the player
+-- @see snowdrift.weather_for_ppos(ppos)
 function snowdrift.weather_for_player(player)
 	local ppos = snowdrift.ppos_for_player(player)
 	return snowdrift.weather_for_ppos(ppos)

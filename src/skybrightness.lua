@@ -1,7 +1,5 @@
---[[ snowdrift/src/skybrightness.lua
-File to manage the modification of the brightness of sky.
-Version : release v0.7.0
-]]
+--- snowdrift/src/skybrightness.lua
+-- File to manage the modification of the brightness of sky.
 
 
 -- Configuration
@@ -12,9 +10,10 @@ local DASVAL = 175 -- Clouds RGB value in daytime
 local difsval = DASVAL - NISVAL
 
 
---[[ snowdrift.set_sky_brightness(weather, player)
-Set the brightness of the sky of the given player, according to the given weather.
-]]
+--- snowdrift.set_sky_brightness(weather, player)
+-- Set the brightness of the sky of the given player, according to the given weather.
+-- @param weather weather to set the the brightness of the sky
+-- @param player player who must see the sky
 function snowdrift.set_sky_brightness(weather, player)
 	-- Occasionally reset player sky
 	if math.random() < 0.1 then
