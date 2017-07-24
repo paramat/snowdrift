@@ -2,16 +2,6 @@
 -- File defining the API of the mod snowdrift
 
 
--- Global variables
--- ===============
-
---- force_weather is a a string representing a weather or the string "default".
--- "default" let the calculations decide of the wheather.
--- "rain", "snow" or "clear" escape calculations and are applyed for every player without checking theirs environnements.
--- Not persistent when server is reboot.
-snowdrift.force_weather = "default"
-
-
 -- Getter and setter
 -- =================
 

@@ -9,7 +9,6 @@
 local RAINGAIN = 0.2
 local SNOWGAIN = 0.3
 
-local OUTSIDE_QUOTA = 0.3 -- minimum of emmited particles to play a sound
 
 -- Variables
 
@@ -25,7 +24,7 @@ local bool_previous_quota = false
 -- @param quota the 
 -- @return true if it changes
 function snowdrift.is_bool_quota_changed(quota)
-	local new_bool_qota = not (quota < OUTSIDE_QUOTA)
+	local new_bool_qota = not (quota < snowdrift.OUTSIDE_QUOTA)
 	local has_changed = (bool_previous_quota ~= new_bool_qota)
 	bool_previous_quota = new_bool_qota
 	return has_changed

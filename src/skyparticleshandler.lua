@@ -2,12 +2,6 @@
 -- File to handle the particules emitted by the sky.
 
 
--- Configuration
--- =============
-
-local COLLIDE = true -- Whether particles collide with nodes
-
-
 -- Rain
 local DROPS = 64 -- Raindrops per cycle
 local RAINBOX = {x = -8, y = 8, z = -8}
@@ -66,7 +60,7 @@ function snowdrift.set_particules_snow(player, ppos)
 				acceleration = SNOWACCELERATION,
 				expirationtime = 8.5,
 				size = 2.8,
-				collisiondetection = COLLIDE,
+				collisiondetection = snowdrift.COLLIDE,
 				collision_removal = true,
 				vertical = false,
 				texture = "snowdrift_snowflake" .. math.random(1, 4) .. ".png",
@@ -100,7 +94,7 @@ function snowdrift.set_particules_rain(player, ppos)
 				acceleration = RAINACCELERATION,
 				expirationtime = 2.1,
 				size = 2.8,
-				collisiondetection = COLLIDE,
+				collisiondetection = snowdrift.COLLIDE,
 				collision_removal = true,
 				vertical = true,
 				texture = "snowdrift_raindrop.png",

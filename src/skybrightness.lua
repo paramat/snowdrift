@@ -2,12 +2,7 @@
 -- File to manage the modification of the brightness of sky.
 
 
--- Configuration
--- =============
-
-local NISVAL = 39 -- Clouds RGB value at night
-local DASVAL = 175 -- Clouds RGB value in daytime
-local difsval = DASVAL - NISVAL
+local difsval = snowdrift.DASVAL - snowdrift.NISVAL
 
 
 --- snowdrift.set_sky_brightness(weather, player)
@@ -31,11 +26,11 @@ function snowdrift.set_sky_brightness(weather, player)
 			-- First transition (24000 -) 4500, (1 -) 0.1875
 			-- Last transition (24000 -) 5750, (1 -) 0.2396
 			if time <= 0.1875 then
-				sval = NISVAL
+				sval = snowdrift.NISVAL
 			elseif time >= 0.2396 then
-				sval = DASVAL
+				sval = snowdrift.DASVAL
 			else
-				sval = math.floor(NISVAL + ((time - 0.1875) / 0.0521) * difsval)
+				sval = math.floor(snowdrift.NISVAL + ((time - 0.1875) / 0.0521) * difsval)
 			end
 			player:set_sky({r = sval, g = sval, b = sval + 16, a = 255}, "plain", {})
 		end

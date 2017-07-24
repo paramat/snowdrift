@@ -2,24 +2,10 @@
 -- File of functions about calculations of snowdrift.
 
 
--- Configuration
--- =============
-
--- Set to world's water level or level of lowest open area,
--- calculations are disabled below this y.
-local YLIMIT = 1 
-				
--- Time scale for precipitation variation in minutes
-local PRECSPR = 6
-
--- Precipitation offset, higher = rains more often
-local PRECOFF = -0.4
-
-
 local np_prec = {
 	offset = 0,
 	scale = 1,
-	spread = {x = PRECSPR, y = PRECSPR, z = PRECSPR},
+	spread = {x = snowdrift.PRECSPR, y = snowdrift.PRECSPR, z = snowdrift.PRECSPR},
 	seed = 813,
 	octaves = 1,
 	persist = 0,
@@ -87,7 +73,7 @@ function snowdrift.weather_for_ppos(ppos)
 	if (snowdrift.force_weather ~="default") then -- Avoid calculations
 		return snowdrift.force_weather
 	end
-	if not (ppos.y >= YLIMIT) then
+	if not (ppos.y >= snowdrift.YLIMIT) then
 		return "clear"
 	else
 		local nobj_temp = nobj_temp or minetest.get_perlin(np_temp)
@@ -108,7 +94,7 @@ so area above line is
  h - 14/95 t > 1496/95 ]]
 			
 		local freeze = nval_temp < 35
-		local precip = nval_prec < (nval_humid - 50) / 50 + PRECOFF and
+		local precip = nval_prec < (nval_humid - 50) / 50 + snowdrift.PRECOFF and
 					nval_humid - grad * nval_temp > yint
 		
 		local weather
