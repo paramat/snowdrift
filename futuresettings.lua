@@ -37,19 +37,11 @@ snowdrift.DASVAL = 175
 -- Whether particles collide with nodes
 snowdrift.COLLIDE = true
 
--- Rain
-snowdrift.DROPS = 64 -- Raindrops per cycle
-snowdrift.RAINBOX = {x = -8, y = 8, z = -8}
-snowdrift.RAINVELOCITY = {x = 0.0, y = -10.0, z = 0.0}
-snowdrift.RAINACCELERATION = {x = 0, y = 0, z = 0}
+ -- Raindrops per cycle
+snowdrift.DROPS = 64
 
-
--- Snow
-snowdrift.FLAKES = 16 -- Snowflakes per cycle
-snowdrift.SNOWBOX = {x = -24, y = 8, z = -20}
-snowdrift.SNOWVELOCITY = {x = 0.0, y = -2.0, z = -1.0}
-snowdrift.SNOWACCELERATION = {x = 0, y = 0, z = 0}
-
+ -- Snowflakes per cycle
+snowdrift.FLAKES = 16
 
 
 -- Behaviour of sound

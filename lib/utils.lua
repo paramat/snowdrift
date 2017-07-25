@@ -2,6 +2,8 @@
 --Small librairy of functions that are not specific at snowdrift.
 
 
+-- Test inside / outside
+
 --- Test if the pos is outside using ligth at midday.
 -- @param pos position to test
 -- @return true if outside
@@ -17,4 +19,5 @@ end
 function snowdrift.is_inside(pos)
 	return (not snowdrift.is_outside(pos))
 end
+
 
