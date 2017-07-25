@@ -2,38 +2,6 @@
 -- File of functions about calculations of snowdrift.
 
 
-local np_prec = {
-	offset = 0,
-	scale = 1,
-	spread = {x = snowdrift.PRECSPR, y = snowdrift.PRECSPR, z = snowdrift.PRECSPR},
-	seed = 813,
-	octaves = 1,
-	persist = 0,
-	lacunarity = 2.0
-}
-
--- These 2 must match biome heat and humidity noise parameters for a world
-local np_temp = {
-	offset = 50,
-	scale = 50,
-	spread = {x = 1000, y = 1000, z = 1000},
-	seed = 5349,
-	octaves = 3,
-	persist = 0.5,
-	lacunarity = 2.0
-}
-
-local np_humid = {
-	offset = 50,
-	scale = 50,
-	spread = {x = 1000, y = 1000, z = 1000},
-	seed = 842,
-	octaves = 3,
-	persist = 0.5,
-	lacunarity = 2.0
-}
-
-
 -- Stuff
 local grad = 14 / 95
 local yint = 1496 / 95
@@ -76,9 +44,9 @@ function snowdrift.weather_for_ppos(ppos)
 	if not (ppos.y >= snowdrift.YLIMIT) then
 		return "clear"
 	else
-		local nobj_temp = nobj_temp or minetest.get_perlin(np_temp)
-		local nobj_humid = nobj_humid or minetest.get_perlin(np_humid)
-		local nobj_prec = nobj_prec or minetest.get_perlin(np_prec)
+		local nobj_temp = nobj_temp or minetest.get_perlin(snowdrift.np_temp)
+		local nobj_humid = nobj_humid or minetest.get_perlin(snowdrift.np_humid)
+		local nobj_prec = nobj_prec or minetest.get_perlin(snowdrift.np_prec)
 
 		local nval_temp = nobj_temp:get2d({x = ppos.x, y = ppos.z})
 		local nval_humid = nobj_humid:get2d({x = ppos.x, y = ppos.z})

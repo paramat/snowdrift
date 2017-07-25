@@ -23,11 +23,14 @@ snowdrift.force_weather = "default"
 
 dofile(minetest.get_modpath("snowdrift").."/lib/utils.lua")
 dofile(minetest.get_modpath("snowdrift").."/futuresettings.lua")
+dofile(minetest.get_modpath("snowdrift").."/src/definitions.lua")
+
 dofile(minetest.get_modpath("snowdrift").."/src/weathertrigger.lua")
 dofile(minetest.get_modpath("snowdrift").."/src/skyparticleshandler.lua")
 dofile(minetest.get_modpath("snowdrift").."/src/skybrightness.lua")
 dofile(minetest.get_modpath("snowdrift").."/src/calculation.lua")
 dofile(minetest.get_modpath("snowdrift").."/src/soundhandler.lua")
+
 dofile(minetest.get_modpath("snowdrift").."/snowdriftAPI.lua")
 dofile(minetest.get_modpath("snowdrift").."/src/commands.lua")
 

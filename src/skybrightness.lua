@@ -2,9 +2,6 @@
 -- File to manage the modification of the brightness of sky.
 
 
-local difsval = snowdrift.DASVAL - snowdrift.NISVAL
-
-
 --- snowdrift.set_sky_brightness(weather, player)
 -- Set the brightness of the sky of the given player, according to the given weather.
 -- @param weather weather to set the the brightness of the sky
@@ -30,7 +27,7 @@ function snowdrift.set_sky_brightness(weather, player)
 			elseif time >= 0.2396 then
 				sval = snowdrift.DASVAL
 			else
-				sval = math.floor(snowdrift.NISVAL + ((time - 0.1875) / 0.0521) * difsval)
+				sval = math.floor(snowdrift.NISVAL + ((time - 0.1875) / 0.0521) * snowdrift.difsval)
 			end
 			player:set_sky({r = sval, g = sval, b = sval + 16, a = 255}, "plain", {})
 		end

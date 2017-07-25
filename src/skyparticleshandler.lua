@@ -2,21 +2,6 @@
 -- File to handle the particules emitted by the sky.
 
 
--- Rain
-local DROPS = 64 -- Raindrops per cycle
-local RAINBOX = {x = -8, y = 8, z = -8}
-local RAINVELOCITY = {x = 0.0, y = -10.0, z = 0.0}
-local RAINACCELERATION = {x = 0, y = 0, z = 0}
-
-
--- Snow
-local FLAKES = 16 -- Snowflakes per cycle
-local SNOWBOX = {x = -24, y = 8, z = -20}
-local SNOWVELOCITY = {x = 0.0, y = -2.0, z = -1.0}
-local SNOWACCELERATION = {x = 0, y = 0, z = 0}
-
-
-
 -- Function
 -- ========
 
@@ -45,8 +30,8 @@ end
 -- @return the percent of particules that have been generated.
 function snowdrift.set_particules_snow(player, ppos)
 	local outside_quota = 0
-	for flake = 1, FLAKES do
-		local box = vector.add(ppos, SNOWBOX)
+	for flake = 1, snowdrift.FLAKES do
+		local box = vector.add(ppos, snowdrift.SNOWBOX)
 		local random_vector = { 
 			x = math.random(0, 47),
 			y = math.random(0, 1),
@@ -56,8 +41,8 @@ function snowdrift.set_particules_snow(player, ppos)
 		if snowdrift.is_outside(pos) then
 			minetest.add_particle({
 				pos = pos,
-				velocity = SNOWVELOCITY,
-				acceleration = SNOWACCELERATION,
+				velocity = snowdrift.SNOWVELOCITY,
+				acceleration = snowdrift.SNOWACCELERATION,
 				expirationtime = 8.5,
 				size = 2.8,
 				collisiondetection = snowdrift.COLLIDE,
@@ -66,7 +51,7 @@ function snowdrift.set_particules_snow(player, ppos)
 				texture = "snowdrift_snowflake" .. math.random(1, 4) .. ".png",
 				playername = player:get_player_name()
 			})
-			outside_quota = outside_quota + 1 / FLAKES
+			outside_quota = outside_quota + 1 / snowdrift.FLAKES
 		end
 	end
 	return outside_quota
@@ -79,8 +64,8 @@ end
 -- @return the percent of particules that have been generated.
 function snowdrift.set_particules_rain(player, ppos)
 	local outside_quota = 0
-	for drop = 1, DROPS do
-		local box = vector.add(ppos, RAINBOX)
+	for drop = 1, snowdrift.DROPS do
+		local box = vector.add(ppos, snowdrift.RAINBOX)
 		local random_vector = { 
 			x = math.random(0, 16),
 			y =  math.random(0, 5),
@@ -90,8 +75,8 @@ function snowdrift.set_particules_rain(player, ppos)
 		if snowdrift.is_outside(pos) then
 			minetest.add_particle({
 				pos = pos,
-				velocity = RAINVELOCITY,
-				acceleration = RAINACCELERATION,
+				velocity = snowdrift.RAINVELOCITY,
+				acceleration = snowdrift.RAINACCELERATION,
 				expirationtime = 2.1,
 				size = 2.8,
 				collisiondetection = snowdrift.COLLIDE,
@@ -100,7 +85,7 @@ function snowdrift.set_particules_rain(player, ppos)
 				texture = "snowdrift_raindrop.png",
 				playername = player:get_player_name()
 			})
-			outside_quota = outside_quota + 1 / DROPS
+			outside_quota = outside_quota + 1 / snowdrift.DROPS
 		end
 	end
 	return outside_quota

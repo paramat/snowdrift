@@ -1,4 +1,4 @@
---- snowdrift/src/futuresettings.lua
+--- snowdrift/futuresettings.lua
 -- That file contain constants to configure snowdrift.
 -- Will probably change into a more conventionnal file of configuration (like settingstype)
 
@@ -31,11 +31,25 @@ snowdrift.NISVAL = 39
 snowdrift.DASVAL = 175
 
 
--- Behaviour of particules
--- =======================
+-- Behaviour of sky particules
+-- ===========================
 
 -- Whether particles collide with nodes
 snowdrift.COLLIDE = true
+
+-- Rain
+snowdrift.DROPS = 64 -- Raindrops per cycle
+snowdrift.RAINBOX = {x = -8, y = 8, z = -8}
+snowdrift.RAINVELOCITY = {x = 0.0, y = -10.0, z = 0.0}
+snowdrift.RAINACCELERATION = {x = 0, y = 0, z = 0}
+
+
+-- Snow
+snowdrift.FLAKES = 16 -- Snowflakes per cycle
+snowdrift.SNOWBOX = {x = -24, y = 8, z = -20}
+snowdrift.SNOWVELOCITY = {x = 0.0, y = -2.0, z = -1.0}
+snowdrift.SNOWACCELERATION = {x = 0, y = 0, z = 0}
+
 
 
 -- Behaviour of sound
