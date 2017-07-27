@@ -100,7 +100,7 @@ snowdrift.particles_data.clear = nil
 
  -- Sound volume
 local RAINGAIN = 0.2
-local SNOWGAIN = 0.3
+local SNOWGAIN = 0.2
 
 
 --- Stock data of sounds.
