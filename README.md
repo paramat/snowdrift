@@ -1,4 +1,5 @@
 **This document for the users of the mod.**
+
 **See Readme_API.md if you are a develloper.**
 
 # Snowdrift
@@ -22,24 +23,22 @@ It avoid abm and useless calculations.
 
 ## 2 Current version
 
-Current :
+Current : 
 
-
-Previous :
-See changelog.md
+Previous : See changelog.md
 
 
 ## 3 Licenses
 See license.md
 
-* Source code
-MIT by paramat
-MIT by bell07
-WTFPL by Spirita
+**Source code**
+- MIT by paramat
+- MIT by bell07
+- WTFPL by Spirita
 
-* Media
+**Media**
 1. Textures
-All : CC BY-SA (3.0) by paramat
+- All : CC BY-SA (3.0) by paramat
 
 2. Sounds
   - snowdrift_rain : CC BY (3.0) by inchadney (http://freesound.org/people/inchadney/sounds/58835/)
@@ -72,29 +71,37 @@ All : CC BY-SA (3.0) by paramat
 - default
 
 
-##7 Installation
+## 7 Installation
 
-* Choose your version
+**Choose your version**
+
  - Release (stable and tested version)
+ 
 Try on paramat depot
+
 https://github.com/paramat/snowdrift/releases
 
-Or on Spirita depot
+Or on Spirita's depot
+
 https://github.com/Spirita/snowdrift/releases/
 
  - Other version (at your own risk)
+ 
 https://github.com/paramat/snowdrift/
+
 Or on branch or pull request from the other users.
 
-* Installation
+**Installation**
 
 2 ways :
  - with git
 Open a terminal and go in your mods folder for Minetest.
 
-'git clone url_of_the_depot'
+    git clone url_of_the_depot
 
-You can update it with 'git pull'.
+You can update it with
+
+    git pull
 
  - with the zip
  
@@ -105,7 +112,7 @@ Uncompress it in your mods folder fot Minetest.
 Rename it "snowdrift".
 
 
-##8 Bug and feedback
+## 8 Bug and feedback
 
 https://forum.minetest.net/viewtopic.php?f=11&t=6854
 

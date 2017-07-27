@@ -1,16 +1,17 @@
-This document for the devellopers who want use the mod in dependance.
-See Readme.md if you are a user.
+**This document for the devellopers who want use the mod in dependance.**
+
+**See Readme.md if you are a user.**
 
 # Snowdrif API
 
 Summary :
 1. Settings
 2. Files
- 1. Functions in ./src/utils.lua
+ - 2.1. Functions in ./src/utils.lua
 3. Description of data
- 1. Player
- 2. Particules
- 3. Sounds
+ - 3.1. Player
+ - 3.2. Particules
+ - 3.3. Sounds
 
 ## Settings
 
@@ -72,7 +73,7 @@ The particules are stocked in snowdrift.particles_data.name_of_their_weather, an
 
 The particules are stocked in snowdrift.sounds_data.name_of_their_weather, and  are describe like this :
 
-song : name of the file without extension
-base_gain : gain used to play the sound, used directly for the moment
+- song : name of the file without extension
+- base_gain : gain used to play the sound, used directly for the moment
 
 
