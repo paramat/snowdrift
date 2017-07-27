@@ -4,7 +4,7 @@
 
 -- Test inside / outside
 
---- Test if the pos is outside using ligth at midday.
+--- Test if the pos is outside using ligth at midday (may issue with glass).
 -- @param pos position to test
 -- @return true if outside
 function snowdrift.is_outside(pos)

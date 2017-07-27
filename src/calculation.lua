@@ -16,33 +16,20 @@ local nobj_humid = nil
 local nobj_prec = nil
 
 
--- Function to calculate position
--- ==============================
-
---- Calculate the position to use for the given player.
--- @param player player to calculate the position
--- @return a table with a value for x, y and z.
-function snowdrift.ppos_for_player(player)
-	local ppos = player:getpos()
-	local pposy = math.floor(ppos.y) + 2 -- Precipitation when swimming
-	local pposx = math.floor(ppos.x)
-	local pposz = math.floor(ppos.z)
-	return {x = pposx, y = pposy, z = pposz}
-end
-
-
 -- Function to calculate the weather
 -- =================================
 
 --- Calculate the weather for the given position.
 -- @param ppos the position to calculate the weather
 -- @return a string representing the weather, or nil if the weather is forced. String can be "rain", "snow" or "clear".
-function snowdrift.weather_for_ppos(ppos)
+function snowdrift.calcul_weather(player_data)
 	if (snowdrift.force_weather ~="default") then -- Avoid calculations
-		return snowdrift.force_weather
+		snowdrift.set_weather(player_data.player_name, snowdrift.force_weather)
+		return
 	end
+	local ppos = player_data.ppos
 	if not (ppos.y >= snowdrift.YLIMIT) then
-		return "clear"
+		snowdrift.set_weather(player_data.player_name, "clear") -- TODO issue : change the sky color
 	else
 		local nobj_temp = nobj_temp or minetest.get_perlin(snowdrift.np_temp)
 		local nobj_humid = nobj_humid or minetest.get_perlin(snowdrift.np_humid)
@@ -65,27 +52,17 @@ so area above line is
 		local precip = nval_prec < (nval_humid - 50) / 50 + snowdrift.PRECOFF and
 					nval_humid - grad * nval_temp > yint
 		
-		local weather
 		if precip then
 			if freeze then
-				weather = "snow"
+				snowdrift.set_weather(player_data.player_name, "snow")
 			else
-				weather = "rain"
+				snowdrift.set_weather(player_data.player_name, "rain")
 			end
 		else
-			weather = "clear"
+			snowdrift.set_weather(player_data.player_name, "clear")
 		end
-		return weather
 	end
 end
 
---- Alias of snowdrift.weather_for_ppos(ppos) to use directly with player.
--- @param player the player to take the position to calculate the weather
--- @return the weather for the player
--- @see snowdrift.weather_for_ppos(ppos)
-function snowdrift.weather_for_player(player)
-	local ppos = snowdrift.ppos_for_player(player)
-	return snowdrift.weather_for_ppos(ppos)
-end
 
 

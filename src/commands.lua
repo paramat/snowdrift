@@ -15,7 +15,7 @@ minetest.register_chatcommand("setweather", {
 	description = "Force the weather to rain, snow or clear, without limit of time. Use default to let it do.",
 	privs = {weather = true},
 	func = function(name, param)
-		snowdrift.set_weather(param)
+		snowdrift.set_force_weather(param)
 	end
 })
 

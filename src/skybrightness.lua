@@ -6,10 +6,11 @@
 -- Set the brightness of the sky of the given player, according to the given weather.
 -- @param weather weather to set the the brightness of the sky
 -- @param player player who must see the sky
-function snowdrift.set_sky_brightness(weather, player)
+function snowdrift.set_sky_brightness(player_data)
+	local player = player_data.player
 	-- Occasionally reset player sky
 	if math.random() < 0.1 then
-		if (weather == "clear") then
+		if (player_data.weather == "clear") then
 			-- Reset sky to normal
 			player:set_sky({}, "regular", {})
 		else

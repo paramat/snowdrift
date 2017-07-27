@@ -47,7 +47,8 @@ snowdrift.difsval = snowdrift.DASVAL - snowdrift.NISVAL
 -- =================
 
 
--- These functions should be replaced by a analysis of folder
+-- TODO These functions should be replaced by a analysis of folder (or a convention like snowdrift_snowflake.X.png if it work with textures)
+
 -- Create a table with the textures to use, one texture is chosen randomly
 local snowtexture_table = function ()
 	local number_of_texture = 4
@@ -92,8 +93,8 @@ snowdrift.particles_data.snow = {
 snowdrift.particles_data.clear = nil
 
 
--- For sound
--- =========
+-- For sounds
+-- ==========
 
 -- Constants here because will probably become variables
 
