@@ -20,16 +20,15 @@ local nobj_prec = nil
 -- =================================
 
 --- Calculate the weather for the given position.
--- @param ppos the position to calculate the weather
--- @return a string representing the weather, or nil if the weather is forced. String can be "rain", "snow" or "clear".
+-- @param player_data the metadata of the player, get player_data.ppos and set_weather(player_data, new_weather)
 function snowdrift.calcul_weather(player_data)
 	if (snowdrift.force_weather ~="default") then -- Avoid calculations
-		snowdrift.set_weather(player_data.player_name, snowdrift.force_weather)
+		snowdrift.set_weather(player_data, snowdrift.force_weather)
 		return
 	end
 	local ppos = player_data.ppos
 	if not (ppos.y >= snowdrift.YLIMIT) then
-		snowdrift.set_weather(player_data.player_name, "clear") -- TODO issue : change the sky color
+		snowdrift.set_weather(player_data, "clear") -- TODO issue : change the sky color
 	else
 		local nobj_temp = nobj_temp or minetest.get_perlin(snowdrift.np_temp)
 		local nobj_humid = nobj_humid or minetest.get_perlin(snowdrift.np_humid)
@@ -54,15 +53,13 @@ so area above line is
 		
 		if precip then
 			if freeze then
-				snowdrift.set_weather(player_data.player_name, "snow")
+				snowdrift.set_weather(player_data, "snow")
 			else
-				snowdrift.set_weather(player_data.player_name, "rain")
+				snowdrift.set_weather(player_data, "rain")
 			end
 		else
-			snowdrift.set_weather(player_data.player_name, "clear")
+			snowdrift.set_weather(player_data, "clear")
 		end
 	end
 end
-
-
 

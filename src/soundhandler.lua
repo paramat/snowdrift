@@ -7,10 +7,7 @@
 
 
 --- Play (or stop) the sound according the weather if it's not already played.
--- @param quota percent of particules that have been generated
--- @param has_changed if the weather have changed
--- @param weather the weather to play the according sound
--- @param player the player to play the sound
+-- @param player_data the metadata of the player, use almost all index
 function snowdrift.set_sound_for_particles(player_data)
 	local new_handle
 	if (player_data.has_changed and player_data.bool_quota) then
@@ -33,7 +30,7 @@ end
 
 
 --- Stop sound to the player called name.
--- @param player the player to stop the sound
+-- @param player_data metadata of the player to stop the sound
 function snowdrift.stop_sound(player_data)
 local handle = player_data.sound_handle
 	if handle then

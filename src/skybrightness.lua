@@ -2,10 +2,8 @@
 -- File to manage the modification of the brightness of sky.
 
 
---- snowdrift.set_sky_brightness(weather, player)
--- Set the brightness of the sky of the given player, according to the given weather.
--- @param weather weather to set the the brightness of the sky
--- @param player player who must see the sky
+--- Set the brightness of the sky of the player according to his weather.
+-- @param player_data metadata of the player, get player_data.player and player_data.weather
 function snowdrift.set_sky_brightness(player_data)
 	local player = player_data.player
 	-- Occasionally reset player sky

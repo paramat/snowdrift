@@ -34,7 +34,7 @@ minetest.register_chatcommand("weather", {
 -- ========
 
 --- Send information about what weather is and if it's forced or not to the chat of the player called name.
--- @param name a name of a valid player
+-- @param player_name a name of a valid player
 function snowdrift.chat_send_player_weather(player_name)
 	local msg = "The weather is "
 	msg = (msg .. snowdrift.players_data[player_name].weather)

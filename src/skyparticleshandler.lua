@@ -5,10 +5,8 @@
 -- Function
 -- ========
 
---- Spawn particules for the given player around its corresponding position ppos and according to the given weather.
--- @param weather create particules of that weather
--- @param player the player who see particules
--- @param ppos set particules around that position
+--- Call the spawning of particules if there is data for particules.
+-- @param player_data the metadata to spawn particules, use almost all index and the setter of the quota
 -- @return the percent of particules that have been generated
 function snowdrift.set_particules(player_data)
 	local particle_data = snowdrift.particles_data[player_data.weather]
@@ -19,7 +17,7 @@ function snowdrift.set_particules(player_data)
 end
 
 
--- Function local
+-- Function local -- TODO make that functions really local
 -- ==============
 
 
@@ -34,14 +32,11 @@ function snowdrift.particule_position(particle_data, player_data)
 end
 
 
---- Spawn particules for the given player around its position ppos.
--- @param particle_data the tables of data for particules
--- @param player the player who see particules
--- @param ppos set particules around that position
+--- Spawn particules for the player around its position.
+-- @param particle_data the data for particules
+-- @param player_data the metadata to spawn particules
 -- @return the percent of particules that have been generated
 function snowdrift.particulespawner(particle_data, player_data)
-	
-	local player_name = player_data.player_name
 		local outside_quota = 0
 		for i_particule = 1, particle_data.base_number do
 		
@@ -60,11 +55,11 @@ function snowdrift.particulespawner(particle_data, player_data)
 						collision_removal = true,
 						vertical = false,
 						texture =  particle_data.texture[random_index],
-						playername = player_name
+						playername = player_data.player_name
 					})
 				outside_quota = outside_quota + 1 / particle_data.base_number
 			end
 		end
-	snowdrift.set_quota(player_name, outside_quota)
+	snowdrift.set_quota(player_data, outside_quota)
 end
 

@@ -2,13 +2,14 @@
 -- Metadata about the player
 
 
-snowdrift.players_data = {} -- TODO may use plurial
+snowdrift.players_data = {}
 
 
-
+--- Initialize the table of metadata for the player
+-- @param player the concerned player
 function snowdrift.initialize_player_data(player)
 	local player_name = player:get_player_name()
-	if not snowdrift.players_data[player_name] then
+	if not snowdrift.players_data[player_name] then -- TODO if must disapear with on_join
 		snowdrift.players_data[player_name] = {
 			player = player,
 			player_name = player_name,
@@ -25,23 +26,28 @@ function snowdrift.initialize_player_data(player)
 end
 
 
-
-function snowdrift.set_weather(player_name, new_weather)
-	if (snowdrift.players_data[player_name].weather ~= new_weather) then
-		snowdrift.players_data[player_name].has_changed = true
+--- Setter of weather, trigger the listeners (not yet)
+-- @param player_data metadata to set
+-- @param new_weather weather to set
+function snowdrift.set_weather(player_data, new_weather)
+	if (player_data.weather ~= new_weather) then
+		player_data.has_changed = true
 		-- TODO Call all listener
 	end
-	snowdrift.players_data[player_name].weather = new_weather
+	player_data.weather = new_weather
 end
 
 
-function snowdrift.set_quota(player_name, new_quota)
+--- Setter of the boolean of the quota, trigger the listeners (not yet)
+-- @param player_data metadata to set
+-- @param new_quota raw percent to compare at the quota to set the boolean
+function snowdrift.set_quota(player_data, new_quota)
 	local new_bool_quota = not (new_quota < snowdrift.OUTSIDE_QUOTA)
-	if (snowdrift.players_data[player_name].bool_quota ~= new_bool_quota) then
-		snowdrift.players_data[player_name].has_changed = true
+	if (player_data.bool_quota ~= new_bool_quota) then
+		player_data.has_changed = true
 		-- TODO Call all listener
 	end
-	snowdrift.players_data[player_name].bool_quota = new_bool_quota
+	player_data.bool_quota = new_bool_quota
 end
 
 
@@ -86,8 +92,6 @@ snowdrift.force_weather = "default"
 
 
 -- Getter and setter
--- =================
-
 
 function snowdrift.get_force_weather()
 	return snowdrift.force_weather
