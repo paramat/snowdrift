@@ -10,17 +10,19 @@
 -- @param player_data the metadata of the player, use almost all index
 function snowdrift.set_sound_for_particles(player_data)
 	local new_handle
-	if (player_data.has_changed and player_data.bool_quota) then
-		local sound_data = snowdrift.sounds_data[player_data.weather]
+	if (player_data.has_changed) then
 		snowdrift.stop_sound(player_data)
-		if sound_data then
-			new_handle = minetest.sound_play(
-			sound_data.song,
-			{
-				to_player =  player_data.player_name,
-				gain = sound_data.gain,
-				loop = true,
-			})
+		if (player_data.bool_quota) then
+			local sound_data = snowdrift.sounds_data[player_data.weather]
+			if sound_data then
+				new_handle = minetest.sound_play(
+				sound_data.song,
+				{
+					to_player =  player_data.player_name,
+					gain = sound_data.gain,
+					loop = true,
+				})
+			end
 		end
 	end
 	if new_handle then
