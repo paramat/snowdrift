@@ -1,4 +1,7 @@
-#Snowdrift
+**This document for the users of the mod.**
+**See Readme_API.md if you are a develloper.**
+
+# Snowdrift
 
 Summary
 1. Presentation
@@ -11,34 +14,22 @@ Summary
 8. Bug and feedback
 
 
-##1 Presentation
+## 1 Presentation
 
 Snowdrift is a server friendly mod that add weather effects with their sound effects.
 It avoid abm and useless calculations.
 
 
-##2 Current version
+## 2 Current version
 
 Current :
-v0.7.0
-Tested with Minetest 0.4.13
+
 
 Previous :
-v0.6.0
-Tested with Minetest 0.4.13
-https://github.com/Spirita/snowdrift/releases/tag/v0.6.0
-
-Changelog since v0.6.0 :
-* Features
- - Add sound for snow
-* Technique
- - Split code in thematiques files
- - Wrap code into functions
- - Create a structure of folder for files of code
- - Write doc for files, some variables and functions
+See changelog.md
 
 
-##3 Licenses
+## 3 Licenses
 See license.md
 
 * Source code
@@ -55,14 +46,15 @@ All : CC BY-SA (3.0) by paramat
   - cobratronik_wind_artic_cold : cc0 by cobratronik (https://freesound.org/people/cobratronik/sounds/117136/)
 
 
-##4 Features
+## 4 Features
 
 - Sometimes it rains !
 - It will be snow if you are in a cold biome.
 - Rain and snow make sound.
 
 
-##5 Technique
+## 5 Technique
+
 - No abm, calculations proceed only if needed
 -> server friendly
 
@@ -72,8 +64,11 @@ All : CC BY-SA (3.0) by paramat
 - Use the heat and the humidity of biomes, not the biomes names
 -> compatible with mods that add biomes
 
+**NB : See Readme_API.md if you are a develloper.**
 
-##6 Dependencies
+
+## 6 Dependencies
+
 - default
 
 
@@ -111,6 +106,11 @@ Rename it "snowdrift".
 
 
 ##8 Bug and feedback
+
 https://forum.minetest.net/viewtopic.php?f=11&t=6854
+
+or
+
+https://github.com/paramat/snowdrift/issues
 
 
