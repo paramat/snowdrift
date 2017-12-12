@@ -1,12 +1,13 @@
 -- Parameters
 
-local YLIMIT = 1 -- Set to world's water level or level of lowest open area,
-				-- calculations are disabled below this y.
+local YLIMIT = 1 -- Set to world's water level
+				-- Particles are timed to disappear at this y
+				-- Particles do not spawn when player's head is below this y
 local PRECSPR = 6 -- Time scale for precipitation variation in minutes
 local PRECOFF = -0.4 -- Precipitation offset, higher = rains more often
 local GSCYCLE = 0.5 -- Globalstep cycle (seconds)
-local FLAKES = 16 -- Snowflakes per cycle
-local DROPS = 64 -- Raindrops per cycle
+local FLAKES = 32 -- Snowflakes per cycle
+local DROPS = 128 -- Raindrops per cycle
 local RAINGAIN = 0.2 -- Rain sound volume
 local COLLIDE = false -- Whether particles collide with nodes
 local NISVAL = 39 -- Clouds RGB value at night
@@ -79,7 +80,7 @@ minetest.register_globalstep(function(dtime)
 		local player_name = player:get_player_name()
 		local ppos = player:getpos()
 		local pposy = math.floor(ppos.y) + 2 -- Precipitation when swimming
-		if pposy >= YLIMIT then
+		if pposy >= YLIMIT - 2 then
 			local pposx = math.floor(ppos.x)
 			local pposz = math.floor(ppos.z)
 			local ppos = {x = pposx, y = pposy, z = pposz}
@@ -124,10 +125,15 @@ minetest.register_globalstep(function(dtime)
 					elseif time >= 0.2396 then
 						sval = DASVAL
 					else
-						sval = math.floor(NISVAL + ((time - 0.1875) / 0.0521) * difsval)
+						sval = math.floor(NISVAL +
+							((time - 0.1875) / 0.0521) * difsval)
 					end
-
-					player:set_sky({r = sval, g = sval, b = sval + 16, a = 255}, "plain", {})
+					-- Set sky to overcast bluish-grey
+					player:set_sky(
+						{r = sval, g = sval, b = sval + 16, a = 255},
+						"plain",
+						{}
+					)
 				else
 					-- Reset sky to normal
 					player:set_sky({}, "regular", {})
@@ -146,44 +152,48 @@ minetest.register_globalstep(function(dtime)
 				-- Precipitation
 				if freeze then
 					-- Snowfall
+					local extime = math.min((pposy + 12 - YLIMIT) / 2, 9)
 					for flake = 1, FLAKES do
 						minetest.add_particle({
 							pos = {
-								x = pposx - 24 + math.random(0, 47),
-								y = pposy + 8 + math.random(0, 1),
-								z = pposz - 20 + math.random(0, 47)
+								x = pposx - 24 + math.random(0, 48),
+								y = pposy + 12,
+								z = pposz - 24 + math.random(0, 48)
 							},
-							vel = {
-								x = 0.0,
+							velocity = {
+								x = (-20 + math.random(0, 40)) / 100,
 								y = -2.0,
-								z = -1.0
+								z = (-20 + math.random(0, 40)) / 100
 							},
-							acc = {x = 0, y = 0, z = 0},
-							expirationtime = 8.5,
+							acceleration = {x = 0, y = 0, z = 0},
+							expirationtime = extime,
 							size = 2.8,
 							collisiondetection = COLLIDE,
 							collision_removal = true,
 							vertical = false,
-							texture = "snowdrift_snowflake" .. math.random(1, 4) .. ".png",
+							texture = "snowdrift_snowflake" ..
+								math.random(1, 12) .. ".png",
 							playername = player:get_player_name()
 						})
 					end
 				else
 					-- Rainfall
-					for flake = 1, DROPS do
+					for drop = 1, DROPS do
+						local spawny = pposy + 10 + math.random(0, 40) / 10
+						local extime = math.min((spawny - YLIMIT) / 10, 1.8)
 						minetest.add_particle({
 							pos = {
-								x = pposx - 8 + math.random(0, 16),
-								y = pposy + 8 + math.random(0, 5),
-								z = pposz - 8 + math.random(0, 16)
+								x = pposx - 12 + math.random(0, 24),
+								y = spawny,
+								z = pposz - 12 + math.random(0, 24)
 							},
-							vel = {
+							velocity = {
 								x = 0.0,
 								y = -10.0,
 								z = 0.0
 							},
-							acc = {x = 0, y = 0, z = 0},
-							expirationtime = 2.1,
+							acceleration = {x = 0, y = 0, z = 0},
+							expirationtime = extime,
 							size = 2.8,
 							collisiondetection = COLLIDE,
 							collision_removal = true,

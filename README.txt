@@ -1,4 +1,4 @@
-snowdrift 0.5.1 by paramat
+snowdrift 0.5.2 by paramat
 For Minetest 0.4.15 and later
 Depends default
 
