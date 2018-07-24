@@ -4,16 +4,15 @@ local YLIMIT = 1 -- Set to world's water level
 				-- Particles are timed to disappear at this y
 				-- Particles do not spawn when player's head is below this y
 local PRECSPR = 6 -- Time scale for precipitation variation in minutes
-local PRECOFF = -0.4 -- Precipitation offset, higher = rains more often
+local PRECOFF = 10---0.4 -- Precipitation offset, higher = rains more often
 local GSCYCLE = 0.5 -- Globalstep cycle (seconds)
-local FLAKES = 32 -- Snowflakes per cycle
-local DROPS = 128 -- Raindrops per cycle
+local FLAKPOS = 48 -- Snowflake light-tested positions per cycle
+local DROPPOS = 192 -- Raindrop light-tested positions per cycle
 local RAINGAIN = 0.2 -- Rain sound volume
-local COLLIDE = false -- Whether particles collide with nodes
 local NISVAL = 39 -- Clouds RGB value at night
 local DASVAL = 175 -- Clouds RGB value in daytime
-local FRADIUS = 48 -- Radius in which flakes are created
-local DRADIUS = 24 -- Radius in which drops are created
+local FLAKRAD = 32 -- Radius in which flakes are created
+local DROPRAD = 16 -- Radius in which drops are created
 
 local np_prec = {
 	offset = 0,
@@ -23,7 +22,7 @@ local np_prec = {
 	octaves = 1,
 	persist = 0,
 	lacunarity = 2.0,
-	--flags = ""
+	flags = "defaults"
 }
 
 -- These 2 must match biome heat and humidity noise parameters for a world
@@ -36,7 +35,7 @@ local np_temp = {
 	octaves = 3,
 	persist = 0.5,
 	lacunarity = 2.0,
-	--flags = ""
+	flags = "defaults"
 }
 
 local np_humid = {
@@ -47,7 +46,7 @@ local np_humid = {
 	octaves = 3,
 	persist = 0.5,
 	lacunarity = 2.0,
-	--flags = ""
+	flags = "defaults"
 }
 
 
@@ -81,10 +80,11 @@ minetest.register_globalstep(function(dtime)
 	for _, player in ipairs(minetest.get_connected_players()) do
 		local player_name = player:get_player_name()
 		-- Predict player position as slightly behind the CYCLE interval.
-		-- Assume scheduling gets behind slighly (the 1.5), this also tested well.
+		-- Assume scheduling gets behind slighly (the 1.5).
 		local ppos = vector.add(player:getpos(),
 			vector.multiply(player:get_player_velocity(), GSCYCLE * 1.5))
-		local pposy = math.floor(ppos.y) + 2 -- Precipitation when swimming
+		-- Point just above player head, for precipitation when swimming
+		local pposy = math.floor(ppos.y) + 2
 		if pposy >= YLIMIT - 2 then
 			local pposx = math.floor(ppos.x)
 			local pposz = math.floor(ppos.z)
@@ -96,6 +96,7 @@ minetest.register_globalstep(function(dtime)
 
 			local nval_temp = nobj_temp:get2d({x = pposx, y = pposz})
 			local nval_humid = nobj_humid:get2d({x = pposx, y = pposz})
+			-- TODO global so move to before player loop
 			local nval_prec = nobj_prec:get2d({x = os.clock() / 60, y = 0})
 
 			-- Biome system: Frozen biomes below heat 35,
@@ -109,9 +110,6 @@ minetest.register_globalstep(function(dtime)
 			local freeze = nval_temp < 35
 			local precip = nval_prec < (nval_humid - 50) / 50 + PRECOFF and
 				nval_humid - grad * nval_temp > yint
-
-			-- Check if player is outside
-			local outside = minetest.get_node_light(ppos, 0.5) == 15
 
 			-- Occasionally reset player sky
 			if math.random() < 0.1 then
@@ -145,7 +143,7 @@ minetest.register_globalstep(function(dtime)
 				end
 			end
 
-			if not precip or not outside or freeze then
+			if not precip or freeze then
 				if handles[player_name] then
 					-- Stop sound if playing
 					minetest.sound_stop(handles[player_name])
@@ -153,59 +151,60 @@ minetest.register_globalstep(function(dtime)
 				end
 			end
 
-			if precip and outside then
+			if precip then
 				-- Precipitation
 				if freeze then
 					-- Snowfall
-					local extime = math.min((pposy + 12 - YLIMIT) / 2, 9)
-					for flake = 1, FLAKES do
-						minetest.add_particle({
-							pos = {
-								x = pposx - FRADIUS + math.random(0, FRADIUS * 2),
-								y = pposy + 12,
-								z = pposz - FRADIUS + math.random(0, FRADIUS * 2)
-							},
-							velocity = {
-								x = (-20 + math.random(0, 40)) / 100,
-								y = -2.0,
-								z = (-20 + math.random(0, 40)) / 100
-							},
-							acceleration = {x = 0, y = 0, z = 0},
-							expirationtime = extime,
-							size = 2.8,
-							collisiondetection = COLLIDE,
-							collision_removal = true,
-							vertical = false,
-							texture = "snowdrift_snowflake" ..
-								math.random(1, 12) .. ".png",
-							playername = player:get_player_name()
-						})
+					for flake = 1, FLAKPOS do
+						local spawnx = pposx - FLAKRAD +
+							math.random(0, FLAKRAD * 2)
+						local spawnz = pposz - FLAKRAD +
+							math.random(0, FLAKRAD * 2)
+						if minetest.get_node_light(
+								{x = spawnx, y = pposy + 10, z = spawnz},
+								0.5) == 15 then
+							local spawny = pposy + 10 + math.random(0, 40) / 10
+							local extime = math.min((spawny - YLIMIT) / 2, 10)
+							minetest.add_particle({
+								pos = {x = spawnx, y = spawny, z = spawnz},
+								velocity = {x = 0, y = -2.0, z = 0},
+								acceleration = {x = 0, y = 0, z = 0},
+								expirationtime = extime,
+								size = 2.8,
+								collisiondetection = true,
+								collision_removal = true,
+								vertical = false,
+								texture = "snowdrift_snowflake" ..
+									math.random(1, 12) .. ".png",
+								playername = player:get_player_name()
+							})
+						end
 					end
 				else
 					-- Rainfall
-					for drop = 1, DROPS do
-						local spawny = pposy + 10 + math.random(0, 40) / 10
-						local extime = math.min((spawny - YLIMIT) / 10, 1.8)
-						minetest.add_particle({
-							pos = {
-								x = pposx - DRADIUS + math.random(0, DRADIUS * 2),
-								y = spawny,
-								z = pposz - DRADIUS + math.random(0, DRADIUS * 2)
-							},
-							velocity = {
-								x = 0.0,
-								y = -10.0,
-								z = 0.0
-							},
-							acceleration = {x = 0, y = 0, z = 0},
-							expirationtime = extime,
-							size = 2.8,
-							collisiondetection = COLLIDE,
-							collision_removal = true,
-							vertical = true,
-							texture = "snowdrift_raindrop.png",
-							playername = player:get_player_name()
-						})
+					for drop = 1, DROPPOS do
+						local spawnx = pposx - DROPRAD +
+							math.random(0, DROPRAD * 2)
+						local spawnz = pposz - DROPRAD +
+							math.random(0, DROPRAD * 2)
+						if minetest.get_node_light(
+								{x = spawnx, y = pposy + 10, z = spawnz},
+								0.5) == 15 then
+							local spawny = pposy + 10 + math.random(0, 40) / 10
+							local extime = math.min((spawny - YLIMIT) / 10, 2)
+							minetest.add_particle({
+								pos = {x = spawnx, y = spawny, z = spawnz},
+								velocity = {x = 0.0, y = -10.0, z = 0.0},
+								acceleration = {x = 0, y = 0, z = 0},
+								expirationtime = extime,
+								size = 2.8,
+								collisiondetection = true,
+								collision_removal = true,
+								vertical = true,
+								texture = "snowdrift_raindrop.png",
+								playername = player:get_player_name()
+							})
+						end
 					end
 
 					if not handles[player_name] then

@@ -1,10 +1,10 @@
-snowdrift 0.5.2 by paramat
+snowdrift 0.6.0 by paramat
 For Minetest 0.4.15 and later
-Depends default
+Depends: default
 
-Licenses:
-Source code:
-MIT by paramat
+Licenses
+--------
+Source code: MIT by paramat
 Media:
 Textures CC BY-SA (3.0) by paramat
 Sounds CC BY (3.0) by inchadney
