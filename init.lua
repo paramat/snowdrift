@@ -1,23 +1,28 @@
 -- Parameters
 
 local YLIMIT = 1 -- Set to world's water level
-				-- Particles are timed to disappear at this y
-				-- Particles do not spawn when player's head is below this y
-local PRECSPR = 6 -- Time scale for precipitation variation in minutes
-local PRECOFF = 10---0.4 -- Precipitation offset, higher = rains more often
-local GSCYCLE = 0.5 -- Globalstep cycle (seconds)
-local FLAKPOS = 48 -- Snowflake light-tested positions per cycle
-local DROPPOS = 192 -- Raindrop light-tested positions per cycle
+					-- Particles are timed to disappear at this y
+					-- Particles do not spawn when player's head is below this y
+local PRECTIM = 5 -- Precipitation noise spread
+					-- Time scale for precipitation variation, in minutes
+local PRECTHR = 0.2 -- Precipitation noise threshold, -1 to 1:
+					-- -1 = precipitation all the time
+					-- 0 = precipitation half the time
+					-- 1 = no precipitation
+local FLAKPOS = 32 -- Snowflake light-tested positions per cycle
+					-- Maximum number of snowflakes spawned per 0.5s
+local DROPPOS = 128 -- Raindrop light-tested positions per cycle
+					-- Maximum number of raindrops spawned per 0.5s
 local RAINGAIN = 0.2 -- Rain sound volume
-local NISVAL = 39 -- Clouds RGB value at night
-local DASVAL = 175 -- Clouds RGB value in daytime
-local FLAKRAD = 32 -- Radius in which flakes are created
+local NISVAL = 39 -- Overcast sky RGB value at night (brightness)
+local DASVAL = 159 -- Overcast sky RGB value in daytime (brightness)
+local FLAKRAD = 24 -- Radius in which flakes are created
 local DROPRAD = 16 -- Radius in which drops are created
 
 local np_prec = {
 	offset = 0,
 	scale = 1,
-	spread = {x = PRECSPR, y = PRECSPR, z = PRECSPR},
+	spread = {x = PRECTIM, y = PRECTIM, z = PRECTIM},
 	seed = 813,
 	octaves = 1,
 	persist = 0,
@@ -49,6 +54,8 @@ local np_humid = {
 	flags = "defaults"
 }
 
+-- End parameters
+
 
 -- Stuff
 
@@ -71,7 +78,7 @@ local timer = 0
 
 minetest.register_globalstep(function(dtime)
 	timer = timer + dtime
-	if timer < GSCYCLE then
+	if timer < 0.5 then
 		return
 	end
 
@@ -79,10 +86,10 @@ minetest.register_globalstep(function(dtime)
 
 	for _, player in ipairs(minetest.get_connected_players()) do
 		local player_name = player:get_player_name()
-		-- Predict player position as slightly behind the CYCLE interval.
-		-- Assume scheduling gets behind slighly (the 1.5).
+		-- Predict player position as slightly behind the cycle interval.
+		-- Assume scheduling gets behind slighly (cycle time * 1.5).
 		local ppos = vector.add(player:getpos(),
-			vector.multiply(player:get_player_velocity(), GSCYCLE * 1.5))
+			vector.multiply(player:get_player_velocity(), 0.75))
 		-- Point just above player head, for precipitation when swimming
 		local pposy = math.floor(ppos.y) + 2
 		if pposy >= YLIMIT - 2 then
@@ -96,7 +103,6 @@ minetest.register_globalstep(function(dtime)
 
 			local nval_temp = nobj_temp:get2d({x = pposx, y = pposz})
 			local nval_humid = nobj_humid:get2d({x = pposx, y = pposz})
-			-- TODO global so move to before player loop
 			local nval_prec = nobj_prec:get2d({x = os.clock() / 60, y = 0})
 
 			-- Biome system: Frozen biomes below heat 35,
@@ -108,7 +114,7 @@ minetest.register_globalstep(function(dtime)
 			-- so area above line is
 			-- h - 14/95 t > 1496/95
 			local freeze = nval_temp < 35
-			local precip = nval_prec < (nval_humid - 50) / 50 + PRECOFF and
+			local precip = nval_prec > PRECTHR and
 				nval_humid - grad * nval_temp > yint
 
 			-- Occasionally reset player sky
@@ -132,14 +138,11 @@ minetest.register_globalstep(function(dtime)
 							((time - 0.1875) / 0.0521) * difsval)
 					end
 					-- Set sky to overcast bluish-grey
-					player:set_sky(
-						{r = sval, g = sval, b = sval + 16, a = 255},
-						"plain",
-						{}
-					)
+					player:set_sky({r = sval, g = sval, b = sval + 16, a = 255},
+						"plain", {}, false)
 				else
 					-- Reset sky to normal
-					player:set_sky({}, "regular", {})
+					player:set_sky({}, "regular", {}, true)
 				end
 			end
 
@@ -163,8 +166,14 @@ minetest.register_globalstep(function(dtime)
 						if minetest.get_node_light(
 								{x = spawnx, y = pposy + 10, z = spawnz},
 								0.5) == 15 then
-							local spawny = pposy + 10 + math.random(0, 40) / 10
+							-- Any position above light-tested position is also
+							-- light level 15.
+							-- Spawn Y randomised to avoid particles falling
+							-- in separated layers.
+							-- Random range = speed * cycle time
+							local spawny = pposy + 10 + math.random(0, 10) / 10
 							local extime = math.min((spawny - YLIMIT) / 2, 10)
+
 							minetest.add_particle({
 								pos = {x = spawnx, y = spawny, z = spawnz},
 								velocity = {x = 0, y = -2.0, z = 0},
@@ -190,11 +199,12 @@ minetest.register_globalstep(function(dtime)
 						if minetest.get_node_light(
 								{x = spawnx, y = pposy + 10, z = spawnz},
 								0.5) == 15 then
-							local spawny = pposy + 10 + math.random(0, 40) / 10
-							local extime = math.min((spawny - YLIMIT) / 10, 2)
+							local spawny = pposy + 10 + math.random(0, 60) / 10
+							local extime = math.min((spawny - YLIMIT) / 12, 2)
+
 							minetest.add_particle({
 								pos = {x = spawnx, y = spawny, z = spawnz},
-								velocity = {x = 0.0, y = -10.0, z = 0.0},
+								velocity = {x = 0.0, y = -12.0, z = 0.0},
 								acceleration = {x = 0, y = 0, z = 0},
 								expirationtime = extime,
 								size = 2.8,

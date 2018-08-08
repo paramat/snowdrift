@@ -1,5 +1,5 @@
-snowdrift 0.6.0 by paramat
-For Minetest 0.4.15 and later
+snowdrift 0.6.1 by paramat
+For Minetest 0.4.16 and later. Compatible with Minetest 5.0.0.
 Depends: default
 
 Licenses
