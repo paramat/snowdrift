@@ -9,14 +9,15 @@ local PRECTHR = 0.2 -- Precipitation noise threshold, -1 to 1:
 					-- -1 = precipitation all the time
 					-- 0 = precipitation half the time
 					-- 1 = no precipitation
-local FLAKPOS = 32 -- Snowflake light-tested positions per cycle
+local FLAKLPOS = 32 -- Snowflake light-tested positions per cycle
 					-- Maximum number of snowflakes spawned per 0.5s
-local DROPPOS = 128 -- Raindrop light-tested positions per cycle
+local DROPLPOS = 64 -- Raindrop light-tested positions per cycle
 					-- Maximum number of raindrops spawned per 0.5s
+local DROPPPOS = 2 -- Raindrops per light-tested pos
 local RAINGAIN = 0.2 -- Rain sound volume
 local NISVAL = 39 -- Overcast sky RGB value at night (brightness)
 local DASVAL = 159 -- Overcast sky RGB value in daytime (brightness)
-local FLAKRAD = 24 -- Radius in which flakes are created
+local FLAKRAD = 16 -- Radius in which flakes are created
 local DROPRAD = 16 -- Radius in which drops are created
 
 local np_prec = {
@@ -158,13 +159,13 @@ minetest.register_globalstep(function(dtime)
 				-- Precipitation
 				if freeze then
 					-- Snowfall
-					for flake = 1, FLAKPOS do
-						local spawnx = pposx - FLAKRAD +
+					for lpos = 1, FLAKLPOS do
+						local lposx = pposx - FLAKRAD +
 							math.random(0, FLAKRAD * 2)
-						local spawnz = pposz - FLAKRAD +
+						local lposz = pposz - FLAKRAD +
 							math.random(0, FLAKRAD * 2)
 						if minetest.get_node_light(
-								{x = spawnx, y = pposy + 10, z = spawnz},
+								{x = lposx, y = pposy + 10, z = lposz},
 								0.5) == 15 then
 							-- Any position above light-tested position is also
 							-- light level 15.
@@ -175,7 +176,7 @@ minetest.register_globalstep(function(dtime)
 							local extime = math.min((spawny - YLIMIT) / 2, 10)
 
 							minetest.add_particle({
-								pos = {x = spawnx, y = spawny, z = spawnz},
+								pos = {x = lposx, y = spawny, z = lposz},
 								velocity = {x = 0, y = -2.0, z = 0},
 								acceleration = {x = 0, y = 0, z = 0},
 								expirationtime = extime,
@@ -191,29 +192,33 @@ minetest.register_globalstep(function(dtime)
 					end
 				else
 					-- Rainfall
-					for drop = 1, DROPPOS do
-						local spawnx = pposx - DROPRAD +
+					for lpos = 1, DROPLPOS do
+						local lposx = pposx - DROPRAD +
 							math.random(0, DROPRAD * 2)
-						local spawnz = pposz - DROPRAD +
+						local lposz = pposz - DROPRAD +
 							math.random(0, DROPRAD * 2)
 						if minetest.get_node_light(
-								{x = spawnx, y = pposy + 10, z = spawnz},
+								{x = lposx, y = pposy + 10, z = lposz},
 								0.5) == 15 then
-							local spawny = pposy + 10 + math.random(0, 60) / 10
-							local extime = math.min((spawny - YLIMIT) / 12, 2)
+							for drop = 1, DROPPPOS do
+								local spawny = pposy + 10 + math.random(0, 60) / 10
+								local extime = math.min((spawny - YLIMIT) / 12, 2)
+								local spawnx = lposx - 0.4 + math.random(0, 8) / 10
+								local spawnz = lposz - 0.4 + math.random(0, 8) / 10
 
-							minetest.add_particle({
-								pos = {x = spawnx, y = spawny, z = spawnz},
-								velocity = {x = 0.0, y = -12.0, z = 0.0},
-								acceleration = {x = 0, y = 0, z = 0},
-								expirationtime = extime,
-								size = 2.8,
-								collisiondetection = true,
-								collision_removal = true,
-								vertical = true,
-								texture = "snowdrift_raindrop.png",
-								playername = player:get_player_name()
-							})
+								minetest.add_particle({
+									pos = {x = spawnx, y = spawny, z = spawnz},
+									velocity = {x = 0.0, y = -12.0, z = 0.0},
+									acceleration = {x = 0, y = 0, z = 0},
+									expirationtime = extime,
+									size = 2.8,
+									collisiondetection = true,
+									collision_removal = true,
+									vertical = true,
+									texture = "snowdrift_raindrop.png",
+									playername = player:get_player_name()
+								})
+							end
 						end
 					end
 
