@@ -3,7 +3,7 @@ snowdrift = {}
 snowdrift.upperLimit = 1000
 
 local PRECTIM = 15 -- Time scale for precipitation variation, in minutes
-local PRECTHR = -1--0.35 -- Precipitation noise threshold, -1 to 1:
+local PRECTHR = 0.35 -- Precipitation noise threshold, -1 to 1:
 					-- -1 = precipitation all the time
 					-- 0 = precipitation half the time
 					-- 1 = no precipitation
