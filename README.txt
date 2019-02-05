@@ -1,4 +1,4 @@
-snowdrift 0.6.3 by paramat
+snowdrift 0.7.0 by paramat
 For Minetest 0.4.16 and later. Compatible with Minetest 5.0.0.
 Depends: default
 
