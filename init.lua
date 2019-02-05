@@ -3,7 +3,7 @@ snowdrift = {}
 snowdrift.upperLimit = 1000
 
 local PRECTIM = 15 -- Time scale for precipitation variation, in minutes
-local PRECTHR = -1--0.35 -- Precipitation noise threshold, -1 to 1:
+local PRECTHR = 0.35 -- Precipitation noise threshold, -1 to 1:
 					-- -1 = precipitation all the time
 					-- 0 = precipitation half the time
 					-- 1 = no precipitation
@@ -103,11 +103,12 @@ minetest.register_globalstep(function(dtime)
 	for _, player in ipairs(minetest.get_connected_players()) do
 		local player_name = player:get_player_name()
 		local pos = player:get_pos()
+		if not pos then return end
 		local ppos = {x=math.floor(pos.x+0.5),y=math.floor(pos.y+0.5),z=math.floor(pos.z+0.5)}
-		-- Point just above player head, for rounding weirdness that happens at negative y coordinates.
-		local pposy = ppos.y + 0.5
-		local nlight = minetest.get_node_light(pos, 0)
-		local dlight = minetest.get_node_light(pos, 0.5)
+		-- Point just above player, for rounding weirdness that happens at negative y coordinates.
+		local pposy = ppos.y
+		local nlight = minetest.get_node_light(ppos, 0)
+		local dlight = minetest.get_node_light(ppos, 0.5)
 		if not (nlight and dlight) then return end -- Light is sometimes nil. Why? Don't ask me.
 		local skylit = dlight - nlight
 		
