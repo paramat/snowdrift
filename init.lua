@@ -206,6 +206,12 @@ minetest.register_globalstep(function(dtime)
 					volumes[player_name] = vol
 				end
 			end
+			local node = minetest.get_node({x=ppos.x,y=math.floor(pos.y+1.9),z=ppos.z})
+			if node and minetest.registered_nodes[node.name] then --Don't show particles when underwater.
+				if minetest.registered_nodes[node.name].liquidtype ~= "none" then
+					return
+				end
+			end
 			
 			-- Rainfall
 			local lposx, lposz, spawny, spawnx, spawnz, spos, weather
