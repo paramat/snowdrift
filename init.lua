@@ -57,7 +57,7 @@ local np_humid = {
 local difsval = DASVAL - NISVAL
 local grad = 14 / 95
 local yint = 1496 / 95
-
+local alt_chill = 20 / 90
 
 -- Initialise noise objects to nil
 
@@ -80,12 +80,12 @@ snowdrift.get_precip = function(pos)
 	nobj_humid = nobj_humid or minetest.get_perlin(np_humid)
 	nobj_prec = nobj_prec or minetest.get_perlin(np_prec)
 
-	local nval_temp = nobj_temp:get2d({x = pos.x, y = pos.z})
+	local nval_temp = nobj_temp:get2d({x = pos.x, y = pos.z}) - pos.y*alt_chill
 	local nval_humid = nobj_humid:get2d({x = pos.x, y = pos.z})
 	local nval_prec = nobj_prec:get2d({x = (os.clock() / 60)%30000, y = 0})
 	
 	
-	local freeze = nval_temp < 35
+	local freeze = (nval_temp) < 28
 	local precip = nval_prec > PRECTHR and
 		nval_humid - grad * nval_temp > yint
 		
@@ -123,7 +123,8 @@ minetest.register_globalstep(function(dtime)
 			nobj_humid = nobj_humid or minetest.get_perlin(np_humid)
 			nobj_prec = nobj_prec or minetest.get_perlin(np_prec)
 
-			local nval_temp = nobj_temp:get2d({x = pposx, y = pposz})
+			local nval_temp = nobj_temp:get2d({x = pposx, y = pposz}) - pos.y*alt_chill
+			 --altitude chill factor in mg_valleys
 			local nval_humid = nobj_humid:get2d({x = pposx, y = pposz})
 			local nval_prec = nobj_prec:get2d({x = (os.clock() / 60)%30000, y = 0})
 
@@ -135,7 +136,8 @@ minetest.register_globalstep(function(dtime)
 			-- h - 14/95 t = 1496/95 y intersection
 			-- so area above line is
 			-- h - 14/95 t > 1496/95
-			local freeze = nval_temp < 35
+			local freeze = nval_temp < 28
+			-- minetest.chat_send_all(nval_temp)
 			local precip = nval_prec > PRECTHR and
 				nval_humid - grad * nval_temp > yint
 			
