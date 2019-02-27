@@ -247,7 +247,7 @@ minetest.register_globalstep(function(dtime)
 							velocity = {x = xv, y = -2.0, z = zv},
 							acceleration = {x = 0, y = 0, z = 0},
 							expirationtime = 24,
-							size = 2.8,
+							size = 1,
 							collisiondetection = true,
 							collision_removal = true,
 							vertical = false,
