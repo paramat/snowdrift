@@ -7,12 +7,14 @@ local PRECTHR = 0.35 -- Precipitation noise threshold, -1 to 1:
 					-- -1 = precipitation all the time
 					-- 0 = precipitation half the time
 					-- 1 = no precipitation
-local DROPLPOS = 96 -- Raindrop light-tested positions per cycle
+local DROPLPOS = 100 -- Raindrop light-tested positions per cycle
 					-- Maximum number of raindrops spawned per 0.5s
 local RAINGAIN = 0.5 -- Rain sound volume
-local NISVAL = 20 -- Overcast sky RGB value at night (brightness)
+local NISVAL = 8 -- Overcast sky RGB value at night (brightness)
 local DASVAL = 159 -- Overcast sky RGB value in daytime (brightness)
-local DROPRAD = 16 -- Radius in which drops are created
+local DROPRAD = 24 -- Radius in which drops are created
+local spawner_density = 5 -- Square root of the number of particle spawners to be created. 
+-- Higher numbers = finer light detection, but more network usage
 
 local np_prec = {
 	offset = 0,
@@ -53,7 +55,8 @@ local np_humid = {
 
 
 -- Stuff
-
+local SDSQUARED = spawner_density*spawner_density
+local SRANGE = DROPRAD/spawner_density
 local difsval = DASVAL - NISVAL
 local grad = 14 / 95
 local yint = 1496 / 95
@@ -94,7 +97,7 @@ end
 
 minetest.register_globalstep(function(dtime)
 	timer = timer + dtime
-	if timer < 0.35 then
+	if timer < 0.75 then
 		return
 	end
 
@@ -107,13 +110,13 @@ minetest.register_globalstep(function(dtime)
 		local ppos = {x=math.floor(pos.x+0.5),y=math.floor(pos.y+0.5),z=math.floor(pos.z+0.5)}
 		-- Point just above player, for rounding weirdness that happens at negative y coordinates.
 		local pposy = ppos.y
-		local nlight = minetest.get_node_light(ppos, 0)
 		local dlight = minetest.get_node_light(ppos, 0.5)
-		if not (nlight and dlight) then return end -- Light is sometimes nil. Why? Don't ask me.
-		local skylit = dlight - nlight
+		if not dlight then return end -- Light is sometimes nil. Why? Don't ask me.
+		local skylit = minetest.get_modpath("minetest_systemd") and
+			minetestd.utils.get_natural_light(pos) or 
+			(minetest.get_node_light(pos, 0.5) - minetest.get_node_light(pos, 0))
 		
 		if (pposy < snowdrift.upperLimit) then
-			
 			
 			local pposx = ppos.x
 			local pposz = ppos.z
@@ -170,7 +173,7 @@ minetest.register_globalstep(function(dtime)
 						((time - 0.1875) / 0.0521) * difsval)
 				end
 				-- Set sky to overcast bluish-grey
-				player:set_sky({r = sval, g = sval, b = sval + (16*sval/DASVAL), a = 255},
+				player:set_sky({r = sval, g = sval, b = math.floor(sval*1.2), a = 255},
 					"plain", {}, false)
 			else
 				-- Reset sky to normal
@@ -187,11 +190,11 @@ minetest.register_globalstep(function(dtime)
 				end
 			else
 				local vol = RAINGAIN * --Fade out sound as player goes out of open sky.
-					((dlight == 15) and 1 or (skylit)/13) *
+					(skylit/15)^2 *
 					rainfall
 				if handles[player_name] then
 					if volumes[player_name] ~= vol then
-						minetest.sound_fade(handles[player_name], vol - volumes[player_name], vol)
+						minetest.sound_fade(handles[player_name], (vol - volumes[player_name])/2, vol)
 						volumes[player_name] = vol
 					end
 				else
@@ -217,22 +220,29 @@ minetest.register_globalstep(function(dtime)
 			
 			-- Rainfall
 			local lposx, lposz, spawny, spawnx, spawnz, spos, weather
-			for lpos = 1, DROPLPOS*rainfall do
-				lposx = pposx - DROPRAD + math.random(0, DROPRAD * 2)
-				lposz = pposz - DROPRAD + math.random(0, DROPRAD * 2)
-				spawny = pposy + math.random(0, 60) / 10
-				spawnx = lposx - 0.4 + math.random(0, 8) / 10
-				spawnz = lposz - 0.4 + math.random(0, 8) / 10
-				spos = {x = spawnx, y = spawny + 10, z = spawnz}
+			local ndrops = math.ceil((DROPLPOS/16)*rainfall)
+			for lpos = 1, SDSQUARED do
+				lposx = pposx - DROPRAD + ((math.floor(lpos/spawner_density) + 0.5) * 2 * SRANGE)
+				lposz = pposz - DROPRAD + (((lpos % spawner_density) + 0.5) * 2 * SRANGE)
+				
+				spos = {x = lposx, y = pposy + 10, z = lposz}
+				-- minetest.set_node(spos, {name="default:glass"})
 				weather = snowdrift.get_precip(spos)
 				if minetest.get_node_light(spos, 0.5) == 15 then
 					if weather == "rain" then
-						minetest.add_particle({
-							pos = spos,
-							velocity = {x = 0.0, y = -12.0, z = 0.0},
-							acceleration = {x = 0, y = 0, z = 0},
-							expirationtime = 2,
-							size = 2.8,
+						minetest.add_particlespawner({
+							amount = ndrops,
+							time = 5,
+							minpos = {x=spos.x-SRANGE,y=spos.y,z=spos.z-SRANGE},
+							maxpos = {x=spos.x+SRANGE,y=spos.y,z=spos.z+SRANGE},
+							minvel = {x = 0.0, y = -14.0, z = 0.0},
+							maxvel = {x = 0.0, y = -12.0, z = 0.0},
+							minacc = {x = 0, y = 0, z = 0},
+							maxacc = {x = 0, y = 0, z = 0},
+							minexptime = 2,
+							maxexptime = 2,
+							minsize = 2.8,
+							maxsize = 2.8,
 							collisiondetection = true,
 							collision_removal = true,
 							vertical = true,
@@ -240,14 +250,19 @@ minetest.register_globalstep(function(dtime)
 							playername = player_name
 						})
 					elseif weather == "snow" then
-						local xv = math.random()/2 --Snow should float around a bit
-						local zv = math.random()/2
-						minetest.add_particle({
-							pos=spos,
-							velocity = {x = xv, y = -2.0, z = zv},
-							acceleration = {x = 0, y = 0, z = 0},
-							expirationtime = 24,
-							size = 1,
+						minetest.add_particlespawner({
+							amount = ndrops,
+							time = 5,
+							minpos = {x=spos.x-SRANGE,y=spos.y,z=spos.z-SRANGE},
+							maxpos = {x=spos.x+SRANGE,y=spos.y,z=spos.z+SRANGE},
+							minvel = {x = -0.5, y = -2.5, z = -0.5},
+							maxvel = {x = 0.5, y = -2.0, z = 0.5},
+							minacc = {x = 0, y = 0, z = 0},
+							maxacc = {x = 0, y = 0, z = 0},
+							minexptime = 24,
+							maxexptime = 24,
+							minsize = 1,
+							maxsize = 1,
 							collisiondetection = true,
 							collision_removal = true,
 							vertical = false,

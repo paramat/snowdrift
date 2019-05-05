@@ -16,7 +16,7 @@ minetest.register_abm({
 	label = "Grow grass in rain",
 	nodenames = {"group:grass"}, --Grow grass
 	interval = 30,
-	chance = 10,
+	chance = 50,
 	action = function(pos, node)
 		if minetest.get_node_light(pos) == 15 and snowdrift.get_precip(pos) == "rain" and pos.y < snowdrift.upperLimit then
 			local level = tonumber(string.sub(node.name, -1))
@@ -35,7 +35,7 @@ minetest.register_abm({
 	nodenames = {"default:dirt_with_grass"},
 	neighbors={"air"},
 	interval = 60,
-	chance = 10,
+	chance = 50,
 	action = function(pos, node)
 		pos.y = pos.y + 1
 		if minetest.get_node(pos).name == "air" and minetest.get_node_light(pos) == 15 and snowdrift.get_precip(pos) == "rain" and pos.y < snowdrift.upperLimit then
@@ -48,7 +48,7 @@ minetest.register_abm({
 	label = "Shorten grass in sun",
 	nodenames = {"default:grass_5"},
 	interval = 30,
-	chance = 12,
+	chance = 60,
 	action = function(pos, node)
 		if not (minetest.get_node_light(pos, 0.5) == 15 and snowdrift.get_precip(pos) == "rain") then
 			local reduce = math.random(1,4)
@@ -62,7 +62,7 @@ minetest.register_abm({
 	label = "Remove grass_1 in sun",
 	nodenames = {"default:grass_1"},
 	interval = 30,
-	chance = 10,
+	chance = 50,
 	action = function(pos, node)
 		if not (minetest.get_node_light(pos, 0.5) == 15 and snowdrift.get_precip(pos) == "rain") then
 			minetest.remove_node(pos)
@@ -89,6 +89,8 @@ if minetest.get_modpath("stairs") then
 		default.node_sound_stone_defaults()
 	)
 	mossy["stairs:stair_cobble"] = "stairs:stair_mossycobble"
+	mossy["stairs:stair_inner_cobble"] = "stairs:stair_inner_mossycobble"
+	mossy["stairs:stair_outer_cobble"] = "stairs:stair_outer_mossycobble"
 	mossy["stairs:slab_cobble"] = "stairs:slab_mossycobble"
 end
 
@@ -100,10 +102,10 @@ end
 minetest.register_abm({
 	nodenames = mossible, --Mossify cobble
 	interval = 30,
-	chance = 6,
+	chance = 30,
 	action = function(pos, node)
 		pos.y=pos.y+1
-		if minetest.get_node_light(pos, 0.5) == 15 and snowdrift.get_precip(pos) == "rain" and pos.y < snowdrift.upperLimit then
+		if pos.y < snowdrift.upperLimit and minetest.get_node_light(pos, 0.5) == 15 and snowdrift.get_precip(pos) == "rain" then
 			pos.y=pos.y-1
 			node.name=mossy[node.name]
 			minetest.set_node(pos, node)
