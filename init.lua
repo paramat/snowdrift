@@ -1,20 +1,20 @@
 -- Parameters
 
 local YWATER = 1 -- Normally set this to world's water level
-					-- Particles are timed to disappear at this y
-					-- Particles are not spawned for players below this y
-					-- Rain sound is not played for players below this y
+				-- Particles are timed to disappear at this y
+				-- Particles are not spawned for players below this y
+				-- Rain sound is not played for players below this y
 local YMIN = -48 -- Normally set this to deepest ocean
 local YMAX = 120 -- Normally set this to cloud level
-					-- Weather does not occur for players outside this y range
-local PRECTIM = 5 -- Precipitation noise 'spread'
-					-- Time scale for precipitation variation, in minutes
+				-- Weather does not occur for players outside this y range
+local PRECTIM = 300 -- Precipitation noise 'spread'
+				-- Time scale for precipitation variation, in seconds
 local PRECTHR = 0.2 -- Precipitation noise threshold, -1 to 1:
-					-- -1 = precipitation all the time
-					-- 0 = precipitation half the time
-					-- 1 = no precipitation
+				-- -1 = precipitation all the time
+				-- 0 = precipitation half the time
+				-- 1 = no precipitation
 local FLAKLPOS = 32 -- Snowflake light-tested positions per 0.5s cycle
-					-- Maximum number of snowflakes spawned per 0.5s
+				-- Maximum number of snowflakes spawned per 0.5s
 local DROPLPOS = 64 -- Raindrop light-tested positions per 0.5s cycle
 local DROPPPOS = 2 -- Number of raindrops spawned per light-tested position
 local RAINGAIN = 0.2 -- Rain sound volume
@@ -85,6 +85,9 @@ local skybox = {} -- true/false. To not turn off skyboxes of other mods
 
 -- Globalstep function
 
+local os_time_0 = os.time()
+local t_offset = math.random(0, 300000)
+
 local timer = 0
 
 minetest.register_globalstep(function(dtime)
@@ -101,28 +104,35 @@ minetest.register_globalstep(function(dtime)
 		-- Point just above player head, to ensure precipitation when swimming
 		local pposy = math.floor(ppos.y) + 2
 		if pposy >= YMIN and pposy <= YMAX then
-			--TODO Predict player position? Only horizontally
-			--local ppos = vector.add(player:getpos(),
-			--vector.multiply(player:get_player_velocity(), ?))
 			local pposx = math.floor(ppos.x)
 			local pposz = math.floor(ppos.z)
 			local ppos = {x = pposx, y = pposy, z = pposz}
 
-			-- Heat and humidity calculations
+			-- Heat, humidity and precipitation noises
+
+			-- Time in seconds.
+			-- Add the per-server-session random time offset to avoid identical behaviour
+			-- each server session.
+			local time = os.difftime(os.time(), os_time_0) - t_offset
+
 			local nobj_temp = nobj_temp or minetest.get_perlin(np_temp)
 			local nobj_humid = nobj_humid or minetest.get_perlin(np_humid)
 			local nobj_prec = nobj_prec or minetest.get_perlin(np_prec)
+
 			local nval_temp = nobj_temp:get2d({x = pposx, y = pposz})
 			local nval_humid = nobj_humid:get2d({x = pposx, y = pposz})
-			local nval_prec = nobj_prec:get2d({x = os.clock() / 60, y = 0})
-			-- Biome system: Frozen biomes below heat 35,
+			local nval_prec = nobj_prec:get2d({x = time, y = 0})
+
+			-- Default Minetest Game biome system:
+			-- Frozen biomes below heat 35
 			-- deserts below line 14 * t - 95 * h = -1496
 			-- h = (14 * t + 1496) / 95
 			-- h = 14/95 * t + 1496/95
-			-- where 14/95 is gradient and 1496/95 is y intersection
-			-- h - 14/95 t = 1496/95 y intersection
+			-- where 14/95 is gradient and 1496/95 is 'y-intersection'
+			-- h - 14/95 * t = 1496/95
 			-- so area above line is
-			-- h - 14/95 t > 1496/95
+			-- h - 14/95 * t > 1496/95
+
 			local freeze = nval_temp < 35
 			local precip = nval_prec > PRECTHR and
 				nval_humid - grad * nval_temp > yint
